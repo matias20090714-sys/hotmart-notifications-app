@@ -6,9 +6,9 @@
   <title>Hotmart Notificaciones en Ráfaga</title>
   <meta name="description" content="Generador de notificaciones reales de Hotmart con sonido de comisiones y ráfaga para iPhone y Android.">
   
-  <!-- Apple iOS & Web App Icons -->
-  <link rel="icon" type="image/svg+xml" href="./hotmart-icon.svg">
-  <link rel="apple-touch-icon" href="./hotmart-icon.svg">
+  <!-- Apple iOS & Web App Icons (PNG Oficial) -->
+  <link rel="icon" type="image/png" href="./hotmart-icon.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Hotmart">
@@ -18,10 +18,13 @@
 </head>
 <body>
 
+  <!-- Floating iOS Notification Overlay (Banners reales en vivo en la pantalla del celular) -->
+  <div class="ios-floating-overlay" id="iosFloatingOverlay"></div>
+
   <!-- Header -->
   <header class="app-header">
     <div class="brand">
-      <img src="./hotmart-icon.svg" alt="Hotmart Logo" class="brand-icon">
+      <img src="./hotmart-icon.png" alt="Hotmart Logo" class="brand-icon">
       <div class="brand-info">
         <h1>Hotmart Live Burst <span class="badge-live">En Vivo</span></h1>
         <p>Notificaciones Reales en tu Teléfono</p>
@@ -33,11 +36,11 @@
   <div class="ios-alert-card" id="iosAlert">
     <div class="ios-alert-icon">📲</div>
     <div class="ios-alert-text">
-      <strong>Para recibir notificaciones reales en tu iPhone 11:</strong>
+      <strong>Para recibir notificaciones del sistema en tu iPhone 11:</strong>
       <ol style="margin: 4px 0 0 16px; font-size: 0.82rem; color: #d1d5db; line-height: 1.4;">
-        <li>Toca el botón <strong>Compartir</strong> <span style="font-size:1rem;">⎙</span> en Safari (cuadrado con flecha abajo).</li>
+        <li>Toca el botón <strong>Compartir</strong> <span style="font-size:1rem;">⎙</span> en Safari.</li>
         <li>Selecciona <strong>"Agregar a la pantalla de inicio"</strong>.</li>
-        <li>Abre la app desde tu pantalla de inicio y activa la ráfaga.</li>
+        <li>Abre la app desde tu pantalla de inicio y presiona Iniciar Ráfaga.</li>
       </ol>
     </div>
   </div>
@@ -84,6 +87,27 @@
           </button>
         </div>
 
+        <!-- Configuración: Cantidad de Notificaciones en la Ráfaga -->
+        <div class="count-selector-group">
+          <div class="count-header">
+            <span>🔢 Cantidad de Notificaciones:</span>
+            <span class="count-progress-badge" id="countProgressBadge">Ilimitadas (∞)</span>
+          </div>
+          
+          <div class="count-chips-row">
+            <button class="count-chip" data-count="10">10</button>
+            <button class="count-chip" data-count="25">25</button>
+            <button class="count-chip" data-count="50">50</button>
+            <button class="count-chip" data-count="100">100</button>
+            <button class="count-chip active" data-count="0">∞ Ilimitadas</button>
+          </div>
+
+          <div class="custom-count-wrapper">
+            <label for="customCountInput">O escribe un número exacto:</label>
+            <input type="number" id="customCountInput" class="input-field" style="max-width: 120px;" placeholder="Ej: 30" min="1" max="1000">
+          </div>
+        </div>
+
         <!-- Burst Speed Settings -->
         <div class="slider-container">
           <div class="slider-header">
@@ -124,7 +148,7 @@
 
             <div class="form-item">
               <label for="customProductInput">Producto (Opcional):</label>
-              <input type="text" id="customProductInput" class="input-field" placeholder="Nombre específico">
+              <input type="text" id="customProductInput" class="input-field" placeholder="Nombre del producto">
             </div>
           </div>
 
@@ -164,7 +188,7 @@
             <div class="dynamic-island" id="dynamicIsland">
               <div class="island-camera"></div>
               <div class="island-content">
-                <img src="./hotmart-icon.svg" class="island-icon" alt="Hotmart">
+                <img src="./hotmart-icon.png" class="island-icon" alt="Hotmart">
                 <div class="island-text">
                   <span class="island-title" id="islandTitle">¡Venta Realizada!</span>
                   <span class="island-sub" id="islandSub">+US$ 47.00</span>
