@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="hotmartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5D00"/>
+      <stop offset="50%" stop-color="#FF3823"/>
+      <stop offset="100%" stop-color="#E50914"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#FF3823" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
+  <g transform="translate(40, 40) scale(0.84)">
+    <path fill="url(#hotmartGrad)" filter="url(#glow)" d="M256 16C256 16 295 118 295 186C295 204.5 289 221.7 278.6 235.8C274.5 210.1 254.8 190.5 230 190.5C201.3 190.5 178 213.8 178 242.5C178 259.7 186.4 274.9 199.3 284.4C183.1 278.2 171.5 262.5 171.5 244C171.5 216 190.8 191.6 211.5 168.5C167.3 189.5 125 240.2 125 307.4C125 385.1 183.6 448 256 448C328.4 448 387 385.1 387 307.4C387 215.3 313.2 143.5 256 16ZM256 414C215.1 414 182 380.9 182 340C182 312.2 197.3 288 220 275C216.5 284.5 214.5 294.7 214.5 305.5C214.5 330.1 234.4 350 259 350C271.3 350 282.4 345 290.5 336.9C289.5 352.6 281.3 366.5 269 374.8C278.4 372.5 286.7 367.2 293 360C290.2 390.6 275.5 414 256 414Z"/>
+  </g>
+</svg>
