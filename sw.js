@@ -1,4 +1,4 @@
-// Service Worker para Notificaciones Nativas en iOS / Android en segundo plano
+// Service Worker para Notificaciones Nativas en iPhone (iOS) y Android vía Apple APNs & Web Push
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,6 +7,39 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// ESCUCHADOR DE PUSH REAL DESDE EL SERVIDOR (Apple APNs)
+self.addEventListener('push', (event) => {
+  let data = {
+    title: '¡Venta realizada!',
+    body: 'Has recibido una nueva comisión en Hotmart.',
+    icon: './hotmart-icon.png',
+    badge: './hotmart-icon.png'
+  };
+
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || './hotmart-icon.png',
+    badge: data.badge || './hotmart-icon.png',
+    vibrate: [200, 100, 200],
+    tag: 'hotmart-sale-' + Date.now(),
+    renotify: true,
+    data: data.data || { url: '/' }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Click en la notificación en el centro de notificaciones de iOS
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
@@ -17,20 +50,4 @@ self.addEventListener('notificationclick', (event) => {
       if (clients.openWindow) return clients.openWindow('/');
     })
   );
-});
-
-// Listener para disparar notificaciones directamente desde el Service Worker
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'TRIGGER_NOTIFICATION') {
-    const { title, body, icon, tag } = event.data;
-    self.registration.showNotification(title, {
-      body: body,
-      icon: icon || './hotmart-icon.svg',
-      badge: icon || './hotmart-icon.svg',
-      tag: tag || 'hotmart-' + Date.now(),
-      renotify: true,
-      silent: false,
-      vibrate: [200, 100, 200]
-    });
-  }
 });
