@@ -1,23 +1,22 @@
 :root {
-  --hotmart-orange: #FF5A00;
+  --hotmart-orange: #FF4600;
   --hotmart-red: #E50914;
   --hotmart-grad: linear-gradient(135deg, #FF5A00 0%, #FF3823 50%, #E50914 100%);
-  --hotmart-dark: #0f1117;
-  --hotmart-card: #181b24;
-  --hotmart-border: rgba(255, 255, 255, 0.08);
-  --hotmart-text: #f0f2f5;
+  --hotmart-dark: #0b0d13;
+  --hotmart-card: #141722;
+  --hotmart-border: rgba(255, 255, 255, 0.09);
+  --hotmart-text: #f3f4f6;
   --hotmart-subtext: #9ca3af;
   --hotmart-success: #10B981;
-  --hotmart-glow: rgba(255, 90, 0, 0.25);
-  --ios-bg: rgba(28, 28, 30, 0.82);
-  --ios-border: rgba(255, 255, 255, 0.14);
+  --ios-banner-bg: rgba(28, 28, 30, 0.88);
+  --ios-banner-border: rgba(255, 255, 255, 0.16);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -29,14 +28,115 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(255, 90, 0, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(229, 9, 20, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 10% 20%, rgba(255, 70, 0, 0.14) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(229, 9, 20, 0.1) 0%, transparent 40%);
 }
 
-/* Header */
+/* Floating Real-Time iOS Banner Overlay (Appears on top of mobile screen) */
+.ios-floating-overlay {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  padding: 0 12px;
+}
+
+.ios-floating-banner {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 400px;
+  background: var(--ios-banner-bg);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
+  border: 1px solid var(--ios-banner-border);
+  border-radius: 20px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: slideDownFloating 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slideDownFloating {
+  0% { opacity: 0; transform: translateY(-40px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ios-floating-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: var(--hotmart-orange);
+}
+
+.ios-floating-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.ios-floating-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ios-floating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ios-floating-app {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ios-floating-time {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ios-floating-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ios-floating-msg {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.35;
+}
+
+.ios-floating-msg .comm {
+  color: #34d399;
+  font-weight: 800;
+}
+
+/* App Header */
 .app-header {
-  padding: 1rem 1.5rem;
-  background: rgba(15, 17, 23, 0.85);
+  padding: 1rem 1.25rem;
+  background: rgba(11, 13, 19, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--hotmart-border);
@@ -48,25 +148,6 @@ body {
   align-items: center;
 }
 
-/* iOS Alert Guide */
-.ios-alert-card {
-  max-width: 1200px;
-  margin: 1rem auto 0 auto;
-  padding: 0.85rem 1.25rem;
-  background: rgba(255, 90, 0, 0.1);
-  border: 1px solid rgba(255, 90, 0, 0.3);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: calc(100% - 2rem);
-}
-
-.ios-alert-icon {
-  font-size: 1.8rem;
-}
-
-
 .brand {
   display: flex;
   align-items: center;
@@ -77,7 +158,7 @@ body {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(255, 90, 0, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 70, 0, 0.4);
 }
 
 .brand-info h1 {
@@ -98,7 +179,6 @@ body {
   border-radius: 20px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -124,41 +204,29 @@ body {
   color: var(--hotmart-subtext);
 }
 
-/* Nav Tabs */
-.view-tabs {
-  display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 4px;
-  border: 1px solid var(--hotmart-border);
-}
-
-.tab-btn {
-  background: transparent;
-  border: none;
-  color: var(--hotmart-subtext);
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* iOS Alert Box */
+.ios-alert-card {
+  max-width: 1200px;
+  margin: 0.75rem auto 0 auto;
+  padding: 0.85rem 1.25rem;
+  background: rgba(255, 70, 0, 0.1);
+  border: 1px solid rgba(255, 70, 0, 0.3);
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 1rem;
+  width: calc(100% - 2rem);
 }
 
-.tab-btn.active {
-  background: var(--hotmart-grad);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(255, 90, 0, 0.35);
+.ios-alert-icon {
+  font-size: 1.8rem;
 }
 
-/* Main Container */
+/* Main Workspace */
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 1.25rem 1rem;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -172,29 +240,28 @@ body {
   }
 }
 
-/* Glass Card */
+/* Cards */
 .card {
   background: var(--hotmart-card);
   border: 1px solid var(--hotmart-border);
   border-radius: 20px;
-  padding: 1.5rem;
+  padding: 1.35rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-  backdrop-filter: blur(16px);
 }
 
 /* Stats Ribbon */
 .stats-ribbon {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 0.85rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .stat-box {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--hotmart-border);
   border-radius: 14px;
-  padding: 0.9rem;
+  padding: 0.85rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -203,40 +270,34 @@ body {
 .stat-box::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 2px;
   background: var(--hotmart-grad);
-  opacity: 0.7;
 }
 
 .stat-label {
   font-size: 0.7rem;
   color: var(--hotmart-subtext);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .stat-val {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #fff;
-  letter-spacing: -0.5px;
 }
 
 .stat-val.highlight {
   color: #10B981;
-  text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
 }
 
-/* Action Controls */
+/* Actions */
 .burst-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .action-row {
@@ -249,7 +310,7 @@ body {
   background: var(--hotmart-grad);
   border: none;
   color: #fff;
-  padding: 1rem 1.5rem;
+  padding: 0.95rem 1.25rem;
   border-radius: 14px;
   font-size: 1.05rem;
   font-weight: 700;
@@ -258,30 +319,18 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 25px rgba(255, 90, 0, 0.35);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(255, 70, 0, 0.35);
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255, 90, 0, 0.5);
-}
-
-.btn-primary:active {
-  transform: translateY(1px);
+  box-shadow: 0 12px 30px rgba(255, 70, 0, 0.5);
 }
 
 .btn-primary.running {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-  animation: pulseButton 1.2s infinite;
-}
-
-@keyframes pulseButton {
-  0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
-  50% { box-shadow: 0 0 35px rgba(239, 68, 68, 0.8); }
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
 }
 
 .btn-secondary {
@@ -289,26 +338,21 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--hotmart-border);
   color: #fff;
-  padding: 1rem 1.2rem;
+  padding: 0.95rem 1rem;
   border-radius: 14px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
 .btn-push-native {
   width: 100%;
-  background: rgba(255, 90, 0, 0.12);
-  border: 1px solid rgba(255, 90, 0, 0.3);
+  background: rgba(255, 70, 0, 0.12);
+  border: 1px solid rgba(255, 70, 0, 0.3);
   color: #FF8A00;
   padding: 0.85rem 1rem;
   border-radius: 12px;
@@ -319,11 +363,6 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.btn-push-native:hover {
-  background: rgba(255, 90, 0, 0.2);
 }
 
 .btn-push-native.active {
@@ -332,76 +371,77 @@ body {
   color: #10B981;
 }
 
-/* Config Grid */
-.config-group {
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--hotmart-border);
-  padding-top: 1.25rem;
+/* Limit & Count Selector */
+.count-selector-group {
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--hotmart-border);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
 }
 
-.config-title {
-  font-size: 0.95rem;
+.count-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.count-progress-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 70, 0, 0.2);
+  color: #FF8A00;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.count-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.count-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--hotmart-border);
+  color: var(--hotmart-subtext);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.count-chip.active {
+  background: var(--hotmart-orange);
+  color: #fff;
+  border-color: var(--hotmart-orange);
+  box-shadow: 0 2px 10px rgba(255, 70, 0, 0.4);
+}
+
+.custom-count-wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 500px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.form-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.form-item label {
-  font-size: 0.75rem;
-  font-weight: 600;
+.custom-count-wrapper label {
+  font-size: 0.78rem;
   color: var(--hotmart-subtext);
 }
 
-.input-field, .select-field {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--hotmart-border);
-  color: #fff;
-  padding: 0.7rem 0.85rem;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-  width: 100%;
-}
-
-.input-field:focus, .select-field:focus {
-  border-color: var(--hotmart-orange);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.select-field option {
-  background: #181b24;
-  color: #fff;
-}
-
-/* Speed Slider */
+/* Slider */
 .slider-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .slider-header {
@@ -433,25 +473,79 @@ body {
   border-radius: 50%;
   background: var(--hotmart-orange);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 90, 0, 0.7);
-  transition: transform 0.1s;
+  box-shadow: 0 0 10px rgba(255, 70, 0, 0.7);
 }
 
-.range-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
+/* Form Settings */
+.config-group {
+  border-top: 1px solid var(--hotmart-border);
+  padding-top: 1.25rem;
 }
 
-/* Toggle Switches */
+.config-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.85rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+@media (max-width: 500px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-item label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--hotmart-subtext);
+}
+
+.input-field, .select-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--hotmart-border);
+  color: #fff;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+}
+
+.input-field:focus, .select-field:focus {
+  border-color: var(--hotmart-orange);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.select-field option {
+  background: #141722;
+  color: #fff;
+}
+
+/* Toggles */
 .toggles-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
 }
 
 .toggle-card {
   flex: 1;
-  min-width: 140px;
+  min-width: 130px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--hotmart-border);
   padding: 0.75rem;
@@ -511,7 +605,7 @@ input:checked + .slider-round:before {
 }
 
 /* ===================================================
-   HYPER-REALISTIC PHONE LOCKSCREEN SIMULATOR
+   PHONE LOCKSCREEN SIMULATOR
    =================================================== */
 .phone-simulator-col {
   display: flex;
@@ -525,9 +619,7 @@ input:checked + .slider-round:before {
   background: #000;
   border-radius: 50px;
   border: 10px solid #2d2f36;
-  box-shadow: 
-    0 25px 60px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -538,35 +630,27 @@ input:checked + .slider-round:before {
 @media (max-width: 450px) {
   .phone-frame {
     width: 100%;
-    height: 680px;
+    height: 640px;
     border-radius: 36px;
     border-width: 6px;
   }
 }
 
-/* Wallpaper */
 .phone-wallpaper {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, #1c2333 0%, #0d1117 50%, #150914 100%);
+  background: linear-gradient(180deg, #182030 0%, #0d1117 50%, #150914 100%);
   z-index: 1;
-  transition: background 0.3s ease;
 }
 
 .wallpaper-blob {
   position: absolute;
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(255, 90, 0, 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 70, 0, 0.35) 0%, transparent 70%);
   top: 15%;
   left: 15%;
   filter: blur(40px);
-  animation: floatBlob 8s ease-in-out infinite alternate;
-}
-
-@keyframes floatBlob {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, 40px) scale(1.15); }
 }
 
 .phone-screen {
@@ -596,7 +680,6 @@ input:checked + .slider-round:before {
   justify-content: space-between;
   padding: 0 10px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .dynamic-island.expanded {
@@ -612,7 +695,6 @@ input:checked + .slider-round:before {
   height: 11px;
   background: #181c24;
   border-radius: 50%;
-  border: 1px solid #282e3c;
 }
 
 .island-sensor {
@@ -676,7 +758,7 @@ input:checked + .slider-round:before {
   font-size: 0.75rem;
 }
 
-/* Phone Lock Clock */
+/* Clock */
 .phone-lock-clock {
   text-align: center;
   margin: 0.75rem 0 1rem 0;
@@ -686,7 +768,6 @@ input:checked + .slider-round:before {
   font-size: 0.85rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.2px;
 }
 
 .lock-time {
@@ -696,18 +777,15 @@ input:checked + .slider-round:before {
   color: #ffffff;
   letter-spacing: -1.5px;
   margin: 0.15rem 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
-/* Notification Stream / Feed in Phone */
+/* Feed */
 .notification-feed {
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  padding-right: 2px;
   scrollbar-width: none;
 }
 
@@ -715,48 +793,33 @@ input:checked + .slider-round:before {
   display: none;
 }
 
-/* ===================================================
-   ULTRA REALISTIC HOTMART NOTIFICATION CARD (iOS Style)
-   =================================================== */
 .hotmart-banner {
-  background: var(--ios-bg);
+  background: var(--ios-banner-bg);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid var(--ios-border);
+  border: 1px solid var(--ios-banner-border);
   border-radius: 18px;
   padding: 0.75rem 0.85rem;
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-  box-shadow: 
-    0 10px 25px rgba(0, 0, 0, 0.35),
-    0 2px 6px rgba(0, 0, 0, 0.2);
-  animation: slideInNotification 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  transform-origin: top center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  animation: slideInNotification 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 @keyframes slideInNotification {
-  0% {
-    opacity: 0;
-    transform: translateY(-25px) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  0% { opacity: 0; transform: translateY(-25px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .hotmart-banner::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  top: 0; left: 0; bottom: 0;
   width: 4px;
-  background: var(--hotmart-grad);
+  background: var(--hotmart-orange);
 }
 
 .banner-app-icon {
@@ -764,8 +827,6 @@ input:checked + .slider-round:before {
   height: 38px;
   min-width: 38px;
   border-radius: 10px;
-  background: #fff;
-  padding: 2px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
@@ -787,10 +848,6 @@ input:checked + .slider-round:before {
   font-weight: 700;
   color: rgba(255, 255, 255, 0.65);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 
 .banner-time {
@@ -802,15 +859,12 @@ input:checked + .slider-round:before {
   font-size: 0.88rem;
   font-weight: 700;
   color: #ffffff;
-  margin-top: 1px;
-  letter-spacing: -0.2px;
 }
 
 .banner-body {
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.88);
   line-height: 1.35;
-  margin-top: 2px;
 }
 
 .banner-commission {
@@ -823,7 +877,6 @@ input:checked + .slider-round:before {
   font-weight: 600;
 }
 
-/* Phone Bottom Tools */
 .phone-bottom-tools {
   margin-top: auto;
   display: flex;
@@ -837,13 +890,10 @@ input:checked + .slider-round:before {
   height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.1rem;
 }
 
 .home-indicator {
@@ -854,41 +904,6 @@ input:checked + .slider-round:before {
   margin: 0.6rem auto 0 auto;
 }
 
-/* QR Modal / Phone Connect */
-.qr-container {
-  margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--hotmart-border);
-  border-radius: 14px;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.qr-box {
-  background: #fff;
-  padding: 6px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-info h4 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 0.25rem;
-}
-
-.qr-info p {
-  font-size: 0.75rem;
-  color: var(--hotmart-subtext);
-  line-height: 1.3;
-}
-
-/* Toast Message */
 .toast-msg {
   position: fixed;
   bottom: 25px;
@@ -901,13 +916,10 @@ input:checked + .slider-round:before {
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   font-size: 0.85rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  z-index: 1000;
+  z-index: 10000;
   transform: translateY(100px);
   opacity: 0;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease;
 }
 
 .toast-msg.show {
