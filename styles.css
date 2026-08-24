@@ -1,15 +1,18 @@
 :root {
-  --hotmart-orange: #FF4600;
-  --hotmart-red: #E50914;
-  --hotmart-grad: linear-gradient(135deg, #FF5A00 0%, #FF3823 50%, #E50914 100%);
+  --hotmart-orange: #FF4D15;
+  --hotmart-red: #EA1D2C;
+  --hotmart-grad: linear-gradient(135deg, #FF4D15 0%, #FF3823 50%, #EA1D2C 100%);
   --hotmart-dark: #0b0d13;
   --hotmart-card: #141722;
   --hotmart-border: rgba(255, 255, 255, 0.09);
   --hotmart-text: #f3f4f6;
   --hotmart-subtext: #9ca3af;
   --hotmart-success: #10B981;
-  --ios-banner-bg: rgba(28, 28, 30, 0.88);
-  --ios-banner-border: rgba(255, 255, 255, 0.16);
+  /* Exact iOS Notification card from screenshot (Frosted glass with light cyan tint) */
+  --ios-banner-bg: rgba(215, 240, 255, 0.72);
+  --ios-banner-border: rgba(255, 255, 255, 0.5);
+  --ios-text-title: #111827;
+  --ios-text-body: #374151;
 }
 
 * {
@@ -28,11 +31,11 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(255, 70, 0, 0.14) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(229, 9, 20, 0.1) 0%, transparent 40%);
+    radial-gradient(circle at 10% 20%, rgba(255, 77, 21, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(234, 29, 44, 0.12) 0%, transparent 40%);
 }
 
-/* Floating Real-Time iOS Banner Overlay (Appears on top of mobile screen) */
+/* Floating Real-Time iOS Banner Overlay (Drops down on top of mobile screen) */
 .ios-floating-overlay {
   position: fixed;
   top: 10px;
@@ -50,22 +53,20 @@ body {
 .ios-floating-banner {
   pointer-events: auto;
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
   background: var(--ios-banner-bg);
   backdrop-filter: blur(35px);
   -webkit-backdrop-filter: blur(35px);
   border: 1px solid var(--ios-banner-border);
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 10px 14px;
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-  animation: slideDownFloating 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  position: relative;
-  overflow: hidden;
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+  animation: slideDownFloating 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 @keyframes slideDownFloating {
@@ -73,21 +74,13 @@ body {
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.ios-floating-banner::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 4px;
-  background: var(--hotmart-orange);
-}
-
 .ios-floating-icon {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border-radius: 9px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 10px;
   object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
 .ios-floating-body {
@@ -103,34 +96,24 @@ body {
   align-items: center;
 }
 
-.ios-floating-app {
-  font-size: 0.72rem;
+.ios-floating-title {
+  font-size: 0.9rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  color: var(--ios-text-title);
+  letter-spacing: -0.2px;
 }
 
 .ios-floating-time {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.ios-floating-title {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: 0.72rem;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 .ios-floating-msg {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.35;
-}
-
-.ios-floating-msg .comm {
-  color: #34d399;
-  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--ios-text-body);
+  font-weight: 500;
+  letter-spacing: -0.1px;
 }
 
 /* App Header */
@@ -155,10 +138,10 @@ body {
 }
 
 .brand-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(255, 70, 0, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 77, 21, 0.4);
 }
 
 .brand-info h1 {
@@ -209,8 +192,8 @@ body {
   max-width: 1200px;
   margin: 0.75rem auto 0 auto;
   padding: 0.85rem 1.25rem;
-  background: rgba(255, 70, 0, 0.1);
-  border: 1px solid rgba(255, 70, 0, 0.3);
+  background: rgba(255, 77, 21, 0.1);
+  border: 1px solid rgba(255, 77, 21, 0.3);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -319,13 +302,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  box-shadow: 0 8px 25px rgba(255, 70, 0, 0.35);
+  box-shadow: 0 8px 25px rgba(255, 77, 21, 0.35);
   transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255, 70, 0, 0.5);
+  box-shadow: 0 12px 30px rgba(255, 77, 21, 0.5);
 }
 
 .btn-primary.running {
@@ -351,8 +334,8 @@ body {
 
 .btn-push-native {
   width: 100%;
-  background: rgba(255, 70, 0, 0.12);
-  border: 1px solid rgba(255, 70, 0, 0.3);
+  background: rgba(255, 77, 21, 0.12);
+  border: 1px solid rgba(255, 77, 21, 0.3);
   color: #FF8A00;
   padding: 0.85rem 1rem;
   border-radius: 12px;
@@ -393,7 +376,7 @@ body {
 .count-progress-badge {
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
-  background: rgba(255, 70, 0, 0.2);
+  background: rgba(255, 77, 21, 0.2);
   color: #FF8A00;
   border-radius: 8px;
   font-weight: 700;
@@ -422,7 +405,7 @@ body {
   background: var(--hotmart-orange);
   color: #fff;
   border-color: var(--hotmart-orange);
-  box-shadow: 0 2px 10px rgba(255, 70, 0, 0.4);
+  box-shadow: 0 2px 10px rgba(255, 77, 21, 0.4);
 }
 
 .custom-count-wrapper {
@@ -473,7 +456,7 @@ body {
   border-radius: 50%;
   background: var(--hotmart-orange);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 70, 0, 0.7);
+  box-shadow: 0 0 10px rgba(255, 77, 21, 0.7);
 }
 
 /* Form Settings */
@@ -605,7 +588,7 @@ input:checked + .slider-round:before {
 }
 
 /* ===================================================
-   PHONE LOCKSCREEN SIMULATOR
+   PHONE LOCKSCREEN SIMULATOR (Matches User Screenshot)
    =================================================== */
 .phone-simulator-col {
   display: flex;
@@ -636,21 +619,12 @@ input:checked + .slider-round:before {
   }
 }
 
+/* Tropical beach background matching screenshot */
 .phone-wallpaper {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, #182030 0%, #0d1117 50%, #150914 100%);
+  background: linear-gradient(180deg, #4fa3d1 0%, #7ec2e5 45%, #b6d3cc 65%, #d8caa7 100%);
   z-index: 1;
-}
-
-.wallpaper-blob {
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(255, 70, 0, 0.35) 0%, transparent 70%);
-  top: 15%;
-  left: 15%;
-  filter: blur(40px);
 }
 
 .phone-screen {
@@ -659,7 +633,7 @@ input:checked + .slider-round:before {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0.75rem 1rem 1.5rem 1rem;
+  padding: 0.75rem 0.85rem 1.5rem 0.85rem;
 }
 
 /* Dynamic Island */
@@ -745,8 +719,8 @@ input:checked + .slider-round:before {
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 700;
+  color: #111;
   padding: 0 0.5rem;
   margin-bottom: 0.5rem;
 }
@@ -756,27 +730,7 @@ input:checked + .slider-round:before {
   align-items: center;
   gap: 6px;
   font-size: 0.75rem;
-}
-
-/* Clock */
-.phone-lock-clock {
-  text-align: center;
-  margin: 0.75rem 0 1rem 0;
-}
-
-.lock-date {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.lock-time {
-  font-size: 4.2rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #ffffff;
-  letter-spacing: -1.5px;
-  margin: 0.15rem 0;
+  color: #111;
 }
 
 /* Feed */
@@ -785,7 +739,7 @@ input:checked + .slider-round:before {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.55rem;
   scrollbar-width: none;
 }
 
@@ -793,20 +747,19 @@ input:checked + .slider-round:before {
   display: none;
 }
 
+/* Hotmart Exact Notification Card */
 .hotmart-banner {
   background: var(--ios-banner-bg);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border: 1px solid var(--ios-banner-border);
   border-radius: 18px;
-  padding: 0.75rem 0.85rem;
+  padding: 0.65rem 0.85rem;
   display: flex;
   gap: 0.75rem;
-  align-items: flex-start;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-  animation: slideInNotification 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  position: relative;
-  overflow: hidden;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  animation: slideInNotification 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 @keyframes slideInNotification {
@@ -814,20 +767,12 @@ input:checked + .slider-round:before {
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.hotmart-banner::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 4px;
-  background: var(--hotmart-orange);
-}
-
 .banner-app-icon {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .banner-content {
@@ -843,38 +788,24 @@ input:checked + .slider-round:before {
   align-items: center;
 }
 
-.banner-app-name {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.65);
-  text-transform: uppercase;
-}
-
-.banner-time {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.45);
-}
-
 .banner-title {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--ios-text-title);
+  letter-spacing: -0.2px;
+}
+
+.banner-time {
+  font-size: 0.72rem;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 .banner-body {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.88);
-  line-height: 1.35;
-}
-
-.banner-commission {
-  color: #34d399;
-  font-weight: 800;
-}
-
-.banner-product {
-  color: #fff;
-  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--ios-text-body);
+  font-weight: 500;
+  letter-spacing: -0.1px;
 }
 
 .phone-bottom-tools {
@@ -889,7 +820,7 @@ input:checked + .slider-round:before {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -899,7 +830,7 @@ input:checked + .slider-round:before {
 .home-indicator {
   width: 130px;
   height: 4px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 10px;
   margin: 0.6rem auto 0 auto;
 }
