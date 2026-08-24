@@ -1,0 +1,9 @@
+{
+  "name": "hotmart-notifications-app",
+  "version": "2.0.0",
+  "description": "Hotmart Live Burst Push Notifications for iOS & Android",
+  "main": "index.html",
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}
