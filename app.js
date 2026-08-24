@@ -1,5 +1,5 @@
 // ===================================================
-// HOTMART LIVE BURST NOTIFICATION ENGINE (iOS APNs & Android)
+// HOTMART EXACT NOTIFICATIONS GENERATOR (iOS APNs & Web)
 // ===================================================
 
 const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
@@ -16,27 +16,15 @@ const state = {
   targetBurstCount: 0, // 0 = Infinite
   startTime: null,
   currency: 'USD',
-  minAmount: 27,
-  maxAmount: 147,
+  minAmount: 17.42,
+  maxAmount: 17.45,
   fixedAmount: null,
   speedMs: 500,
   isRandomSpeed: false,
   soundEnabled: true,
   vibrateEnabled: true,
   pushEnabled: false,
-  wakeLock: null,
-  products: [
-    "Método Tráfico Automático Pro",
-    "Fórmula de Lanzamiento Digital",
-    "Masterclass High Ticket 2026",
-    "Academia E-commerce & Afiliados",
-    "IA para Creadores de Contenido",
-    "Monetización Digital Express",
-    "Copywriting & Ventas Persuasivas",
-    "Mentalidad de Éxito y Finanzas",
-    "Reto 7 Días Primeras Ventas",
-    "Club de Creadores Digitales"
-  ]
+  wakeLock: null
 };
 
 // Elements
@@ -55,8 +43,6 @@ const elements = {
   dynamicIsland: document.getElementById('dynamicIsland'),
   islandTitle: document.getElementById('islandTitle'),
   islandSub: document.getElementById('islandSub'),
-  lockTime: document.getElementById('lockTime'),
-  lockDate: document.getElementById('lockDate'),
   speedSlider: document.getElementById('speedSlider'),
   speedDisplay: document.getElementById('speedDisplay'),
   currencySelect: document.getElementById('currencySelect'),
@@ -159,7 +145,7 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // ===================================================
-// PUSH REGISTRATION WITH APPLE APNs (VAPID)
+// PUSH REGISTRATION WITH APPLE APNs
 // ===================================================
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -178,16 +164,12 @@ async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       swRegistration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-      
-      // Check existing subscription
       pushSubscription = await swRegistration.pushManager.getSubscription();
       if (pushSubscription) {
         state.pushEnabled = true;
         updatePushBtnState(true);
       }
-    } catch (err) {
-      console.warn("Service Worker registration error:", err);
-    }
+    } catch (err) {}
   }
 }
 
@@ -202,42 +184,34 @@ async function requestNativePushPermission() {
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      showToast("❌ Permiso denegado por iOS/navegador.");
+      showToast("❌ Permiso denegado.");
       return false;
     }
 
-    // Wait for SW ready
     if (!swRegistration) {
       swRegistration = await navigator.serviceWorker.ready;
     }
 
-    // Subscribe to Apple APNs / Web Push
     try {
       const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
       pushSubscription = await swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: convertedVapidKey
       });
-      console.log("Subscripción Push obtenida:", pushSubscription);
-    } catch (subErr) {
-      console.warn("Apple PushManager subscription fallback:", subErr);
-    }
+    } catch (subErr) {}
 
     state.pushEnabled = true;
     updatePushBtnState(true);
-    showToast("🔔 ¡Notificaciones de iPhone activadas con éxito!");
+    showToast("🔔 ¡Notificaciones activadas en tu iPhone!");
 
-    // Test notification
     dispatchSaleNotification({
-      title: "¡Venta realizada!",
-      body: "Has recibido una comisión de US$ 97.00 por el producto 'Método Pro'.",
-      formattedAmount: "US$ 97.00",
-      product: "Método Pro"
+      title: "Venta realizada con Tarjeta...",
+      body: "Tu comisión: US$ 17.45 - HP2295266365",
+      formattedAmount: "US$ 17.45"
     });
 
     return true;
   } catch (e) {
-    console.error("Error al activar notificaciones:", e);
     state.pushEnabled = true;
     updatePushBtnState(true);
     return true;
@@ -255,11 +229,9 @@ function updatePushBtnState(active) {
   }
 }
 
-// Envía la notificación tanto por el servidor APNs como por Service Worker local
 async function dispatchSaleNotification(sale) {
   const iconUrl = new URL('./hotmart-icon.png', window.location.href).href;
 
-  // 1. Enviar vía Serverless API a Apple APNs (Para que llegue fuera de la web o con pantalla bloqueada)
   if (pushSubscription) {
     fetch('/api/push', {
       method: 'POST',
@@ -273,7 +245,6 @@ async function dispatchSaleNotification(sale) {
     }).catch(() => {});
   }
 
-  // 2. Service Worker showNotification (Para que aparezca de inmediato en el centro de notificaciones de iOS)
   if (swRegistration && swRegistration.showNotification) {
     swRegistration.showNotification(sale.title, {
       body: sale.body,
@@ -298,7 +269,7 @@ async function dispatchSaleNotification(sale) {
 }
 
 // ===================================================
-// FLOATING REAL-TIME iOS BANNER (Slide down on phone screen)
+// FLOATING REAL-TIME iOS BANNER (Matching Screenshot)
 // ===================================================
 function showFloatingIOSBanner(sale) {
   const overlay = elements.iosFloatingOverlay;
@@ -310,13 +281,10 @@ function showFloatingIOSBanner(sale) {
     <img src="./hotmart-icon.png" alt="Hotmart" class="ios-floating-icon" />
     <div class="ios-floating-body">
       <div class="ios-floating-header">
-        <span class="ios-floating-app">HOTMART</span>
+        <span class="ios-floating-title">${sale.title}</span>
         <span class="ios-floating-time">ahora</span>
       </div>
-      <div class="ios-floating-title">${sale.title}</div>
-      <div class="ios-floating-msg">
-        Has recibido una comisión de <span class="comm">${sale.formattedAmount}</span> por el producto "${sale.product}".
-      </div>
+      <div class="ios-floating-msg">${sale.body}</div>
     </div>
   `;
 
@@ -363,7 +331,7 @@ function releaseWakeLock() {
 }
 
 // ===================================================
-// DATA GENERATOR
+// EXACT HOTMART TRANSACTION DATA BUILDER
 // ===================================================
 function generateSaleData() {
   const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.USD;
@@ -377,23 +345,28 @@ function generateSaleData() {
     amount = (Math.random() * (max - min) + min).toFixed(2);
   }
 
-  let product = "";
-  if (state.customProduct && state.customProduct.trim().length > 0) {
-    product = state.customProduct.trim();
-  } else {
-    product = state.products[Math.floor(Math.random() * state.products.length)];
-  }
+  // Generar código de transacción Hotmart exacto: HP + 10 dígitos (ej: HP2295266365)
+  const hpCode = 'HP' + Math.floor(1000000000 + Math.random() * 9000000000);
+
+  // Formato exacto del screenshot
+  const titles = [
+    "Venta realizada con Tarjeta...",
+    "Venta realizada con Tarjeta...",
+    "Venta efectuada",
+    "Venta realizada con Tarjeta...",
+    "Venta realizada con PayPal..."
+  ];
+  const title = titles[Math.floor(Math.random() * titles.length)];
 
   const formattedAmount = `${curr.prefix}${Number(amount).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const title = "¡Venta realizada!";
-  const body = `Has recibido una comisión de ${formattedAmount} por el producto "${product}".`;
+  const body = `Tu comisión: ${formattedAmount} - ${hpCode}`;
 
   return {
     title,
     body,
     amount: parseFloat(amount),
     formattedAmount,
-    product,
+    hpCode,
     time: "ahora"
   };
 }
@@ -433,7 +406,7 @@ function triggerSingleSale() {
 
 function triggerDynamicIsland(sale) {
   if (!elements.dynamicIsland) return;
-  elements.islandTitle.textContent = "¡Venta Realizada!";
+  elements.islandTitle.textContent = sale.title;
   elements.islandSub.textContent = `+${sale.formattedAmount}`;
   
   elements.dynamicIsland.classList.add('expanded');
@@ -453,13 +426,10 @@ function renderBannerToFeed(sale) {
     <img src="./hotmart-icon.png" alt="Hotmart" class="banner-app-icon" />
     <div class="banner-content">
       <div class="banner-header">
-        <span class="banner-app-name">HOTMART</span>
+        <span class="banner-title">${sale.title}</span>
         <span class="banner-time">ahora</span>
       </div>
-      <div class="banner-title">${sale.title}</div>
-      <div class="banner-body">
-        Has recibido una comisión de <span class="banner-commission">${sale.formattedAmount}</span> por el producto <span class="banner-product">"${sale.product}"</span>.
-      </div>
+      <div class="banner-body">${sale.body}</div>
     </div>
   `;
 
@@ -476,7 +446,6 @@ function renderBannerToFeed(sale) {
 function startBurst() {
   sfx.init();
   
-  // Auto-request push if not yet granted
   if (!state.pushEnabled && "Notification" in window && Notification.permission !== "granted") {
     requestNativePushPermission();
   }
@@ -553,28 +522,12 @@ function updateStatsDisplay() {
     }
   }
 
-  // Count badge
   if (elements.countProgressBadge) {
     if (state.targetBurstCount === 0) {
       elements.countProgressBadge.textContent = state.isRunning ? `Enviadas: ${state.sentInCurrentBurst} (Ilimitadas)` : "Ilimitadas (∞)";
     } else {
       elements.countProgressBadge.textContent = state.isRunning ? `Enviando: ${state.sentInCurrentBurst} / ${state.targetBurstCount}` : `Meta: ${state.targetBurstCount} notificaciones`;
     }
-  }
-}
-
-function updatePhoneClock() {
-  const now = new Date();
-  if (elements.lockTime) {
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    elements.lockTime.textContent = `${hours}:${minutes}`;
-  }
-  if (elements.lockDate) {
-    const options = { weekday: 'long', day: 'numeric', month: 'long' };
-    let dateStr = now.toLocaleDateString('es-ES', options);
-    dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-    elements.lockDate.textContent = dateStr;
   }
 }
 
@@ -589,7 +542,7 @@ function showToast(message) {
 }
 
 // ===================================================
-// INITIALIZATION & EVENT HANDLERS
+// INITIALIZATION
 // ===================================================
 function initEvents() {
   registerServiceWorker();
@@ -607,7 +560,6 @@ function initEvents() {
   
   elements.btnEnablePush.addEventListener('click', requestNativePushPermission);
 
-  // Count selector chips
   elements.countChips.forEach(chip => {
     chip.addEventListener('click', (e) => {
       elements.countChips.forEach(c => c.classList.remove('active'));
@@ -620,7 +572,6 @@ function initEvents() {
     });
   });
 
-  // Custom count input
   if (elements.customCountInput) {
     elements.customCountInput.addEventListener('input', (e) => {
       const val = parseInt(e.target.value);
@@ -632,7 +583,6 @@ function initEvents() {
     });
   }
 
-  // Speed slider
   elements.speedSlider.addEventListener('input', (e) => {
     const val = parseInt(e.target.value);
     if (val === 0) {
@@ -647,7 +597,6 @@ function initEvents() {
     updateStatsDisplay();
   });
 
-  // Currency & amounts
   elements.currencySelect.addEventListener('change', (e) => {
     state.currency = e.target.value;
     updateStatsDisplay();
@@ -658,10 +607,6 @@ function initEvents() {
   });
   elements.maxAmountInput.addEventListener('change', (e) => {
     state.maxAmount = parseFloat(e.target.value) || 100;
-  });
-
-  elements.customProductInput.addEventListener('input', (e) => {
-    state.customProduct = e.target.value;
   });
 
   elements.soundToggle.addEventListener('change', (e) => {
@@ -677,16 +622,26 @@ function initEvents() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initEvents();
-  updatePhoneClock();
-  setInterval(updatePhoneClock, 1000);
   updateStatsDisplay();
 
+  // Initial preview matching user screenshot
   setTimeout(() => {
     renderBannerToFeed({
-      title: "¡Venta realizada!",
-      body: `Has recibido una comisión de US$ 87.50 por el producto "Método Venta Automática Pro".`,
-      formattedAmount: "US$ 87.50",
-      product: "Método Venta Automática Pro",
+      title: "Venta realizada con Tarjeta...",
+      body: "Tu comisión: US$ 17.45 - HP2295266365",
+      formattedAmount: "US$ 17.45",
+      time: "ahora"
+    });
+    renderBannerToFeed({
+      title: "Venta realizada con Tarjeta...",
+      body: "Tu comisión: US$ 17.44 - HP1353385734",
+      formattedAmount: "US$ 17.44",
+      time: "ahora"
+    });
+    renderBannerToFeed({
+      title: "Venta efectuada",
+      body: "Tu Comisión: US$ 17.41 - HP0900520954",
+      formattedAmount: "US$ 17.41",
       time: "ahora"
     });
   }, 200);
