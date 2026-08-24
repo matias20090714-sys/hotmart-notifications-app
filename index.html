@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hotmart Notificaciones en Ráfaga | Generador Oficial</title>
+  <meta name="description" content="Generador de notificaciones hiperrealistas de Hotmart en vivo. Modo ráfaga rápida, audio de comisiones y notificaciones push directas a tu celular.">
+  <link rel="icon" type="image/svg+xml" href="./hotmart-icon.svg">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <img src="./hotmart-icon.svg" alt="Hotmart Logo" class="brand-icon" id="appLogo">
+      <div class="brand-info">
+        <h1>Hotmart Live Burst <span class="badge-live">En Vivo</span></h1>
+        <p>Generador de Notificaciones Realistas 2026</p>
+      </div>
+    </div>
+    <div class="view-tabs">
+      <button class="tab-btn active" id="tabControl">⚡ Panel</button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="main-container">
+    
+    <!-- Left Column: Burst Controls & Configuration -->
+    <section class="controls-col">
+      <div class="card">
+        
+        <!-- Live Stats Ribbon -->
+        <div class="stats-ribbon">
+          <div class="stat-box">
+            <div class="stat-label">Comisiones Hoy</div>
+            <div class="stat-val highlight" id="statRevenue">US$ 0.00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Ventas Totales</div>
+            <div class="stat-val" id="statSales">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Velocidad</div>
+            <div class="stat-val" id="statSpeed">0.5s</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Ritmo</div>
+            <div class="stat-val" id="statRate">0/min</div>
+          </div>
+        </div>
+
+        <!-- Burst Action Buttons -->
+        <div class="burst-actions">
+          <div class="action-row">
+            <button class="btn-primary" id="btnToggleBurst">
+              <span>⚡</span> Iniciar Ráfaga en Vivo
+            </button>
+            <button class="btn-secondary" id="btnSingleSale">
+              <span>🔔</span> 1 Venta
+            </button>
+          </div>
+          <button class="btn-push-native" id="btnEnablePush">
+            <span>📲</span> Activar Notificaciones en mi Celular
+          </button>
+        </div>
+
+        <!-- Burst Speed Settings -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <span>Velocidad de Ráfaga:</span>
+            <span class="speed-badge" id="speedDisplay">0.5 segundos por notificación</span>
+          </div>
+          <input type="range" min="0" max="3000" step="100" value="500" class="range-slider" id="speedSlider">
+        </div>
+
+        <!-- Customization Configs -->
+        <div class="config-group">
+          <div class="config-title">⚙️ Personalización de Comisiones</div>
+          
+          <div class="form-grid">
+            <div class="form-item">
+              <label for="currencySelect">Moneda Oficial:</label>
+              <select id="currencySelect" class="select-field">
+                <option value="USD">Dólar USD ($)</option>
+                <option value="EUR">Euro EUR (€)</option>
+                <option value="BRL">Real Brasileño (R$)</option>
+                <option value="MXN">Peso Mexicano ($)</option>
+                <option value="COP">Peso Colombiano ($)</option>
+                <option value="PEN">Sol Peruano (S/.)</option>
+                <option value="ARS">Peso Argentino ($)</option>
+                <option value="CLP">Peso Chileno ($)</option>
+              </select>
+            </div>
+
+            <div class="form-item">
+              <label for="minAmountInput">Comisión Mínima:</label>
+              <input type="number" id="minAmountInput" class="input-field" value="27" min="1">
+            </div>
+
+            <div class="form-item">
+              <label for="maxAmountInput">Comisión Máxima:</label>
+              <input type="number" id="maxAmountInput" class="input-field" value="147" min="1">
+            </div>
+
+            <div class="form-item">
+              <label for="customProductInput">Producto Específico (Opcional):</label>
+              <input type="text" id="customProductInput" class="input-field" placeholder="Ej: Método Pro 2026 (vacío para rotar)">
+            </div>
+          </div>
+
+          <!-- Sound and Vibrate Toggles -->
+          <div class="toggles-row">
+            <label class="toggle-card">
+              <span>🔊 Sonido Ka-Ching</span>
+              <div class="switch">
+                <input type="checkbox" id="soundToggle" checked>
+                <span class="slider-round"></span>
+              </div>
+            </label>
+            <label class="toggle-card">
+              <span>📳 Vibración Háptica</span>
+              <div class="switch">
+                <input type="checkbox" id="vibrateToggle" checked>
+                <span class="slider-round"></span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Phone Connection & QR Code -->
+        <div class="qr-container">
+          <div class="qr-box">
+            <img id="qrImage" src="" alt="Código QR Móvil" width="90" height="90">
+          </div>
+          <div class="qr-info">
+            <h4>📲 ¿Quieres que lleguen a tu móvil?</h4>
+            <p>Escanea este código QR con tu celular o ábrelo en Chrome/Safari móvil para activar el modo ráfaga y recibir las ventas en vivo.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+          <button class="btn-secondary" id="btnClearFeed" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+            🧹 Limpiar Notificaciones
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Column: Ultra-Realistic Phone Lockscreen Simulator -->
+    <section class="phone-simulator-col">
+      <div class="phone-frame">
+        
+        <!-- Wallpaper Background -->
+        <div class="phone-wallpaper">
+          <div class="wallpaper-blob"></div>
+        </div>
+
+        <div class="phone-screen">
+          
+          <!-- Dynamic Island / Top Camera -->
+          <div class="dynamic-island-container">
+            <div class="dynamic-island" id="dynamicIsland">
+              <div class="island-camera"></div>
+              <div class="island-content">
+                <img src="./hotmart-icon.svg" class="island-icon" alt="Hotmart">
+                <div class="island-text">
+                  <span class="island-title" id="islandTitle">¡Venta Realizada!</span>
+                  <span class="island-sub" id="islandSub">+US$ 47.00</span>
+                </div>
+              </div>
+              <div class="island-sensor"></div>
+            </div>
+          </div>
+
+          <!-- Status Bar -->
+          <div class="phone-statusbar">
+            <span class="statusbar-carrier">Hotmart 5G</span>
+            <div class="statusbar-icons">
+              <span>📶</span>
+              <span>5G</span>
+              <span>🔋 100%</span>
+            </div>
+          </div>
+
+          <!-- Lock Screen Clock -->
+          <div class="phone-lock-clock">
+            <div class="lock-date" id="lockDate">Lunes, 24 de agosto</div>
+            <div class="lock-time" id="lockTime">20:15</div>
+          </div>
+
+          <!-- Live Waterfall Notification Feed -->
+          <div class="notification-feed" id="notificationFeed">
+            <!-- Dynamic Hotmart Banners will inject here in cascade -->
+          </div>
+
+          <!-- Phone Bottom Tools & Home Bar -->
+          <div class="phone-bottom-tools">
+            <div class="lock-tool-btn">🔦</div>
+            <div class="lock-tool-btn">📷</div>
+          </div>
+          <div class="home-indicator"></div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Live Toast -->
+  <div class="toast-msg" id="toast"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
