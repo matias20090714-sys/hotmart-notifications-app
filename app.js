@@ -1,8 +1,11 @@
 // ===================================================
-// HOTMART LIVE BURST NOTIFICATION ENGINE (iOS 16+ & Android)
+// HOTMART LIVE BURST NOTIFICATION ENGINE (iOS APNs & Android)
 // ===================================================
 
+const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
+
 let swRegistration = null;
+let pushSubscription = null;
 
 const state = {
   isRunning: false,
@@ -156,41 +159,85 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // ===================================================
-// SERVICE WORKER & NOTIFICATIONS
+// PUSH REGISTRATION WITH APPLE APNs (VAPID)
 // ===================================================
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       swRegistration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-    } catch (err) {}
+      
+      // Check existing subscription
+      pushSubscription = await swRegistration.pushManager.getSubscription();
+      if (pushSubscription) {
+        state.pushEnabled = true;
+        updatePushBtnState(true);
+      }
+    } catch (err) {
+      console.warn("Service Worker registration error:", err);
+    }
   }
 }
 
 async function requestNativePushPermission() {
   sfx.init();
 
-  if (!("Notification" in window)) {
-    showToast("🔔 Usando banners en vivo de iPhone");
-    state.pushEnabled = true;
-    updatePushBtnState(true);
-    return true;
+  if (!('serviceWorker' in navigator)) {
+    showToast("⚠️ Tu navegador no soporta Service Workers.");
+    return false;
   }
 
   try {
     const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      state.pushEnabled = true;
-      updatePushBtnState(true);
-      showToast("🔔 ¡Notificaciones de sistema activadas!");
-      dispatchNativeNotification("¡Venta realizada!", "Has recibido una comisión de US$ 97.00 por el producto 'Método Pro'.");
-      return true;
-    } else {
-      state.pushEnabled = true; // Still allow floating banners
-      updatePushBtnState(true);
-      showToast("📲 Banners flotantes activos en tu iPhone");
-      return true;
+    if (permission !== "granted") {
+      showToast("❌ Permiso denegado por iOS/navegador.");
+      return false;
     }
+
+    // Wait for SW ready
+    if (!swRegistration) {
+      swRegistration = await navigator.serviceWorker.ready;
+    }
+
+    // Subscribe to Apple APNs / Web Push
+    try {
+      const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+      pushSubscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: convertedVapidKey
+      });
+      console.log("Subscripción Push obtenida:", pushSubscription);
+    } catch (subErr) {
+      console.warn("Apple PushManager subscription fallback:", subErr);
+    }
+
+    state.pushEnabled = true;
+    updatePushBtnState(true);
+    showToast("🔔 ¡Notificaciones de iPhone activadas con éxito!");
+
+    // Test notification
+    dispatchSaleNotification({
+      title: "¡Venta realizada!",
+      body: "Has recibido una comisión de US$ 97.00 por el producto 'Método Pro'.",
+      formattedAmount: "US$ 97.00",
+      product: "Método Pro"
+    });
+
+    return true;
   } catch (e) {
+    console.error("Error al activar notificaciones:", e);
     state.pushEnabled = true;
     updatePushBtnState(true);
     return true;
@@ -208,13 +255,28 @@ function updatePushBtnState(active) {
   }
 }
 
-function dispatchNativeNotification(title, body) {
+// Envía la notificación tanto por el servidor APNs como por Service Worker local
+async function dispatchSaleNotification(sale) {
   const iconUrl = new URL('./hotmart-icon.png', window.location.href).href;
 
-  // 1. Service Worker Notification (Primary)
+  // 1. Enviar vía Serverless API a Apple APNs (Para que llegue fuera de la web o con pantalla bloqueada)
+  if (pushSubscription) {
+    fetch('/api/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription: pushSubscription,
+        title: sale.title,
+        body: sale.body,
+        icon: iconUrl
+      })
+    }).catch(() => {});
+  }
+
+  // 2. Service Worker showNotification (Para que aparezca de inmediato en el centro de notificaciones de iOS)
   if (swRegistration && swRegistration.showNotification) {
-    swRegistration.showNotification(title, {
-      body: body,
+    swRegistration.showNotification(sale.title, {
+      body: sale.body,
       icon: iconUrl,
       badge: iconUrl,
       tag: 'hotmart-' + Date.now(),
@@ -222,13 +284,10 @@ function dispatchNativeNotification(title, body) {
       silent: false,
       vibrate: [200, 100, 200]
     }).catch(() => {});
-  }
-
-  // 2. Direct Window Notification
-  if ("Notification" in window && Notification.permission === "granted") {
+  } else if ("Notification" in window && Notification.permission === "granted") {
     try {
-      new Notification(title, {
-        body: body,
+      new Notification(sale.title, {
+        body: sale.body,
         icon: iconUrl,
         badge: iconUrl,
         tag: 'hotmart-' + Date.now(),
@@ -263,7 +322,6 @@ function showFloatingIOSBanner(sale) {
 
   overlay.appendChild(banner);
 
-  // Auto remove after 2.8s
   setTimeout(() => {
     banner.style.transition = 'all 0.3s ease';
     banner.style.opacity = '0';
@@ -273,7 +331,6 @@ function showFloatingIOSBanner(sale) {
     }, 300);
   }, 2800);
 
-  // Keep max 3 floating banners on screen
   if (overlay.children.length > 3) {
     overlay.removeChild(overlay.firstChild);
   }
@@ -351,10 +408,10 @@ function triggerSingleSale() {
   sfx.playCashRegister();
   triggerVibrate();
 
-  // 2. Send Native Notification
-  dispatchNativeNotification(sale.title, sale.body);
+  // 2. Send Real Push to iPhone (Apple APNs + Notification Center)
+  dispatchSaleNotification(sale);
 
-  // 3. Drop down realistic floating banner on phone
+  // 3. Drop down realistic floating banner on phone screen
   showFloatingIOSBanner(sale);
 
   // 4. Update Metrics & Burst Count
@@ -418,6 +475,12 @@ function renderBannerToFeed(sale) {
 // ===================================================
 function startBurst() {
   sfx.init();
+  
+  // Auto-request push if not yet granted
+  if (!state.pushEnabled && "Notification" in window && Notification.permission !== "granted") {
+    requestNativePushPermission();
+  }
+
   state.isRunning = true;
   state.sentInCurrentBurst = 0;
   state.startTime = Date.now();
@@ -427,7 +490,7 @@ function startBurst() {
   elements.btnToggleBurst.innerHTML = `<span>⏹️</span> Detener Ráfaga`;
 
   updateStatsDisplay();
-  showToast("🔥 ¡Ráfaga de Hotmart iniciada!");
+  showToast("🔥 ¡Ráfaga de notificaciones iniciada!");
 
   function loop() {
     if (!state.isRunning) return;
