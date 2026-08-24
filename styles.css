@@ -48,6 +48,25 @@ body {
   align-items: center;
 }
 
+/* iOS Alert Guide */
+.ios-alert-card {
+  max-width: 1200px;
+  margin: 1rem auto 0 auto;
+  padding: 0.85rem 1.25rem;
+  background: rgba(255, 90, 0, 0.1);
+  border: 1px solid rgba(255, 90, 0, 0.3);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: calc(100% - 2rem);
+}
+
+.ios-alert-icon {
+  font-size: 1.8rem;
+}
+
+
 .brand {
   display: flex;
   align-items: center;
