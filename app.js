@@ -9,6 +9,8 @@ const state = {
   timerId: null,
   totalSales: 0,
   totalRevenue: 0,
+  sentInCurrentBurst: 0,
+  targetBurstCount: 0, // 0 = Infinite
   startTime: null,
   currency: 'USD',
   minAmount: 27,
@@ -39,6 +41,9 @@ const elements = {
   btnToggleBurst: document.getElementById('btnToggleBurst'),
   btnSingleSale: document.getElementById('btnSingleSale'),
   btnEnablePush: document.getElementById('btnEnablePush'),
+  countProgressBadge: document.getElementById('countProgressBadge'),
+  customCountInput: document.getElementById('customCountInput'),
+  countChips: document.querySelectorAll('.count-chip'),
   statRevenue: document.getElementById('statRevenue'),
   statSales: document.getElementById('statSales'),
   statSpeed: document.getElementById('statSpeed'),
@@ -58,7 +63,7 @@ const elements = {
   soundToggle: document.getElementById('soundToggle'),
   vibrateToggle: document.getElementById('vibrateToggle'),
   toast: document.getElementById('toast'),
-  iosGuideModal: document.getElementById('iosGuideModal')
+  iosFloatingOverlay: document.getElementById('iosFloatingOverlay')
 };
 
 const CURRENCY_MAP = {
@@ -97,14 +102,14 @@ class SoundFX {
       const ctx = this.ctx;
       const now = ctx.currentTime;
 
-      // 1. Moneda inicial / Impacto de caja registradora
+      // 1. Moneda inicial / Caja
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(987.77, now);
       osc1.frequency.exponentialRampToValueAtTime(1975.53, now + 0.08);
       
-      gain1.gain.setValueAtTime(0.35, now);
+      gain1.gain.setValueAtTime(0.4, now);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
       osc1.connect(gain1);
@@ -121,7 +126,7 @@ class SoundFX {
       osc2.frequency.setValueAtTime(3135.96, now + 0.18);
 
       gain2.gain.setValueAtTime(0.001, now);
-      gain2.gain.setValueAtTime(0.45, now + 0.07);
+      gain2.gain.setValueAtTime(0.5, now + 0.07);
       gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
 
       osc2.connect(gain2);
@@ -134,7 +139,7 @@ class SoundFX {
       const gain3 = ctx.createGain();
       osc3.type = 'sine';
       osc3.frequency.setValueAtTime(4186.01, now + 0.1);
-      gain3.gain.setValueAtTime(0.2, now + 0.1);
+      gain3.gain.setValueAtTime(0.25, now + 0.1);
       gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
 
       osc3.connect(gain3);
@@ -151,36 +156,24 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // ===================================================
-// SERVICE WORKER & NATIVE NOTIFICATIONS REGISTRATION
+// SERVICE WORKER & NOTIFICATIONS
 // ===================================================
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       swRegistration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-      console.log("Service Worker registrado con éxito:", swRegistration);
-    } catch (err) {
-      console.warn("Error al registrar Service Worker:", err);
-    }
+    } catch (err) {}
   }
 }
 
 async function requestNativePushPermission() {
   sfx.init();
 
-  // Detect iOS Safari standalone requirement
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-
-  if (isIOS && !isStandalone) {
-    if (elements.iosGuideModal) {
-      elements.iosGuideModal.classList.add('show');
-    }
-    showToast("📱 En iPhone: Toca Compartir y luego 'Agregar a Inicio'");
-  }
-
   if (!("Notification" in window)) {
-    showToast("⚠️ Este navegador no soporta notificaciones de sistema.");
-    return false;
+    showToast("🔔 Usando banners en vivo de iPhone");
+    state.pushEnabled = true;
+    updatePushBtnState(true);
+    return true;
   }
 
   try {
@@ -188,20 +181,19 @@ async function requestNativePushPermission() {
     if (permission === "granted") {
       state.pushEnabled = true;
       updatePushBtnState(true);
-      showToast("🔔 ¡Notificaciones nativas activadas en tu iPhone!");
-      
-      // Test notification
+      showToast("🔔 ¡Notificaciones de sistema activadas!");
       dispatchNativeNotification("¡Venta realizada!", "Has recibido una comisión de US$ 97.00 por el producto 'Método Pro'.");
       return true;
     } else {
-      state.pushEnabled = false;
-      updatePushBtnState(false);
-      showToast("❌ Permiso de notificaciones no concedido.");
-      return false;
+      state.pushEnabled = true; // Still allow floating banners
+      updatePushBtnState(true);
+      showToast("📲 Banners flotantes activos en tu iPhone");
+      return true;
     }
   } catch (e) {
-    console.error("Error al solicitar permiso:", e);
-    return false;
+    state.pushEnabled = true;
+    updatePushBtnState(true);
+    return true;
   }
 }
 
@@ -217,11 +209,9 @@ function updatePushBtnState(active) {
 }
 
 function dispatchNativeNotification(title, body) {
-  if (!state.pushEnabled && Notification.permission !== "granted") return;
+  const iconUrl = new URL('./hotmart-icon.png', window.location.href).href;
 
-  const iconUrl = new URL('./hotmart-icon.svg', window.location.href).href;
-
-  // 1. Try Service Worker Show Notification (Primary for iOS)
+  // 1. Service Worker Notification (Primary)
   if (swRegistration && swRegistration.showNotification) {
     swRegistration.showNotification(title, {
       body: body,
@@ -231,14 +221,11 @@ function dispatchNativeNotification(title, body) {
       renotify: true,
       silent: false,
       vibrate: [200, 100, 200]
-    }).catch(() => {
-      // Fallback
-      try {
-        new Notification(title, { body, icon: iconUrl });
-      } catch (e) {}
-    });
-  } else {
-    // 2. Direct Notification Fallback
+    }).catch(() => {});
+  }
+
+  // 2. Direct Window Notification
+  if ("Notification" in window && Notification.permission === "granted") {
     try {
       new Notification(title, {
         body: body,
@@ -247,9 +234,48 @@ function dispatchNativeNotification(title, body) {
         tag: 'hotmart-' + Date.now(),
         renotify: true
       });
-    } catch (e) {
-      console.warn("Direct notification failed:", e);
-    }
+    } catch (e) {}
+  }
+}
+
+// ===================================================
+// FLOATING REAL-TIME iOS BANNER (Slide down on phone screen)
+// ===================================================
+function showFloatingIOSBanner(sale) {
+  const overlay = elements.iosFloatingOverlay;
+  if (!overlay) return;
+
+  const banner = document.createElement('div');
+  banner.className = 'ios-floating-banner';
+  banner.innerHTML = `
+    <img src="./hotmart-icon.png" alt="Hotmart" class="ios-floating-icon" />
+    <div class="ios-floating-body">
+      <div class="ios-floating-header">
+        <span class="ios-floating-app">HOTMART</span>
+        <span class="ios-floating-time">ahora</span>
+      </div>
+      <div class="ios-floating-title">${sale.title}</div>
+      <div class="ios-floating-msg">
+        Has recibido una comisión de <span class="comm">${sale.formattedAmount}</span> por el producto "${sale.product}".
+      </div>
+    </div>
+  `;
+
+  overlay.appendChild(banner);
+
+  // Auto remove after 2.8s
+  setTimeout(() => {
+    banner.style.transition = 'all 0.3s ease';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-20px) scale(0.95)';
+    setTimeout(() => {
+      if (banner.parentNode) banner.parentNode.removeChild(banner);
+    }, 300);
+  }, 2800);
+
+  // Keep max 3 floating banners on screen
+  if (overlay.children.length > 3) {
+    overlay.removeChild(overlay.firstChild);
   }
 }
 
@@ -280,7 +306,7 @@ function releaseWakeLock() {
 }
 
 // ===================================================
-// HOTMART DATA GENERATOR
+// DATA GENERATOR
 // ===================================================
 function generateSaleData() {
   const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.USD;
@@ -321,23 +347,31 @@ function generateSaleData() {
 function triggerSingleSale() {
   const sale = generateSaleData();
 
-  // Sound & Vibration
+  // 1. Play Sound & Vibration
   sfx.playCashRegister();
   triggerVibrate();
 
-  // Real iPhone Notification
+  // 2. Send Native Notification
   dispatchNativeNotification(sale.title, sale.body);
 
-  // Metrics
+  // 3. Drop down realistic floating banner on phone
+  showFloatingIOSBanner(sale);
+
+  // 4. Update Metrics & Burst Count
   state.totalSales += 1;
+  state.sentInCurrentBurst += 1;
   state.totalRevenue += sale.amount;
   updateStatsDisplay();
 
-  // Dynamic Island
+  // 5. Dynamic Island & Lockscreen
   triggerDynamicIsland(sale);
-
-  // Lockscreen Feed
   renderBannerToFeed(sale);
+
+  // Check if reached target count
+  if (state.targetBurstCount > 0 && state.sentInCurrentBurst >= state.targetBurstCount) {
+    stopBurst();
+    showToast(`✅ ¡Ráfaga completada! Se enviaron las ${state.targetBurstCount} notificaciones.`);
+  }
 }
 
 function triggerDynamicIsland(sale) {
@@ -359,7 +393,7 @@ function renderBannerToFeed(sale) {
   const banner = document.createElement('div');
   banner.className = 'hotmart-banner';
   banner.innerHTML = `
-    <img src="./hotmart-icon.svg" alt="Hotmart" class="banner-app-icon" />
+    <img src="./hotmart-icon.png" alt="Hotmart" class="banner-app-icon" />
     <div class="banner-content">
       <div class="banner-header">
         <span class="banner-app-name">HOTMART</span>
@@ -374,7 +408,7 @@ function renderBannerToFeed(sale) {
 
   feed.insertBefore(banner, feed.firstChild);
 
-  if (feed.children.length > 30) {
+  if (feed.children.length > 25) {
     feed.removeChild(feed.lastChild);
   }
 }
@@ -385,17 +419,21 @@ function renderBannerToFeed(sale) {
 function startBurst() {
   sfx.init();
   state.isRunning = true;
+  state.sentInCurrentBurst = 0;
   state.startTime = Date.now();
   requestWakeLock();
 
   elements.btnToggleBurst.classList.add('running');
   elements.btnToggleBurst.innerHTML = `<span>⏹️</span> Detener Ráfaga`;
 
-  showToast("🔥 ¡Ráfaga iniciada en tu iPhone!");
+  updateStatsDisplay();
+  showToast("🔥 ¡Ráfaga de Hotmart iniciada!");
 
   function loop() {
     if (!state.isRunning) return;
     triggerSingleSale();
+
+    if (!state.isRunning) return;
 
     let nextDelay = state.speedMs;
     if (state.isRandomSpeed) {
@@ -419,7 +457,7 @@ function stopBurst() {
   elements.btnToggleBurst.classList.remove('running');
   elements.btnToggleBurst.innerHTML = `<span>⚡</span> Iniciar Ráfaga en Vivo`;
 
-  showToast("⏸️ Ráfaga detenida.");
+  updateStatsDisplay();
 }
 
 function toggleBurst() {
@@ -451,6 +489,15 @@ function updateStatsDisplay() {
       elements.statRate.textContent = `0/min`;
     }
   }
+
+  // Count badge
+  if (elements.countProgressBadge) {
+    if (state.targetBurstCount === 0) {
+      elements.countProgressBadge.textContent = state.isRunning ? `Enviadas: ${state.sentInCurrentBurst} (Ilimitadas)` : "Ilimitadas (∞)";
+    } else {
+      elements.countProgressBadge.textContent = state.isRunning ? `Enviando: ${state.sentInCurrentBurst} / ${state.targetBurstCount}` : `Meta: ${state.targetBurstCount} notificaciones`;
+    }
+  }
 }
 
 function updatePhoneClock() {
@@ -479,12 +526,11 @@ function showToast(message) {
 }
 
 // ===================================================
-// INITIALIZATION
+// INITIALIZATION & EVENT HANDLERS
 // ===================================================
 function initEvents() {
   registerServiceWorker();
 
-  // Check if permission already granted
   if ("Notification" in window && Notification.permission === "granted") {
     state.pushEnabled = true;
     updatePushBtnState(true);
@@ -498,12 +544,38 @@ function initEvents() {
   
   elements.btnEnablePush.addEventListener('click', requestNativePushPermission);
 
+  // Count selector chips
+  elements.countChips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      elements.countChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const count = parseInt(chip.getAttribute('data-count'));
+      state.targetBurstCount = count;
+      if (elements.customCountInput) elements.customCountInput.value = '';
+      updateStatsDisplay();
+      showToast(count === 0 ? "♾️ Notificaciones ilimitadas" : `🔢 Configurado para ${count} notificaciones`);
+    });
+  });
+
+  // Custom count input
+  if (elements.customCountInput) {
+    elements.customCountInput.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      if (val > 0) {
+        elements.countChips.forEach(c => c.classList.remove('active'));
+        state.targetBurstCount = val;
+        updateStatsDisplay();
+      }
+    });
+  }
+
+  // Speed slider
   elements.speedSlider.addEventListener('input', (e) => {
     const val = parseInt(e.target.value);
     if (val === 0) {
       state.isRandomSpeed = true;
-      state.speedMs = 350;
-      elements.speedDisplay.textContent = "Modo Extremo (Ráfaga continua)";
+      state.speedMs = 300;
+      elements.speedDisplay.textContent = "Modo Extremo (Ráfaga instantánea)";
     } else {
       state.isRandomSpeed = false;
       state.speedMs = val;
@@ -512,6 +584,7 @@ function initEvents() {
     updateStatsDisplay();
   });
 
+  // Currency & amounts
   elements.currencySelect.addEventListener('change', (e) => {
     state.currency = e.target.value;
     updateStatsDisplay();
