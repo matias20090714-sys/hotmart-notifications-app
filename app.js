@@ -67,14 +67,18 @@ const CURRENCY_MAP = {
 };
 
 // ===================================================
-// AUDIO SYSTEM (Real Hotmart Cash Register Ka-Ching)
+// AUDIO SYSTEM (Real Hotmart Cash Register Audio File & Web Audio)
 // ===================================================
 class SoundFX {
   constructor() {
     this.ctx = null;
+    this.audioEl = null;
   }
 
   init() {
+    if (!this.audioEl) {
+      this.audioEl = document.getElementById('hotmartAudio');
+    }
     if (!this.ctx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioContext();
@@ -86,17 +90,35 @@ class SoundFX {
 
   playCashRegister() {
     if (!state.soundEnabled) return;
+    this.init();
+
+    // 1. Intentar reproducir el archivo de audio nativo hotmart-sound.wav
+    if (this.audioEl) {
+      try {
+        const soundClone = this.audioEl.cloneNode(true);
+        soundClone.volume = 1.0;
+        soundClone.play().catch(() => {
+          this.playSyntheticCash();
+        });
+        return;
+      } catch (e) {}
+    }
+
+    this.playSyntheticCash();
+  }
+
+  playSyntheticCash() {
     try {
-      this.init();
+      if (!this.ctx) return;
       const ctx = this.ctx;
       const now = ctx.currentTime;
 
-      // 1. Moneda inicial / Caja
+      // Monedas iniciales
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
       osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(987.77, now);
-      osc1.frequency.exponentialRampToValueAtTime(1975.53, now + 0.08);
+      osc1.frequency.setValueAtTime(1800, now);
+      osc1.frequency.exponentialRampToValueAtTime(2400, now + 0.08);
       
       gain1.gain.setValueAtTime(0.4, now);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
@@ -106,7 +128,7 @@ class SoundFX {
       osc1.start(now);
       osc1.stop(now + 0.18);
 
-      // 2. Timbre brillante clásico de Hotmart ("Ka-Ching!")
+      // Timbre Hotmart ("Ka-Ching!")
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
       osc2.type = 'triangle';
@@ -122,23 +144,7 @@ class SoundFX {
       gain2.connect(ctx.destination);
       osc2.start(now + 0.06);
       osc2.stop(now + 0.7);
-
-      // 3. Campana armónica final
-      const osc3 = ctx.createOscillator();
-      const gain3 = ctx.createGain();
-      osc3.type = 'sine';
-      osc3.frequency.setValueAtTime(4186.01, now + 0.1);
-      gain3.gain.setValueAtTime(0.25, now + 0.1);
-      gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
-
-      osc3.connect(gain3);
-      gain3.connect(ctx.destination);
-      osc3.start(now + 0.1);
-      osc3.stop(now + 0.55);
-
-    } catch (e) {
-      console.warn("Audio error:", e);
-    }
+    } catch (e) {}
   }
 }
 
