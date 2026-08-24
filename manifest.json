@@ -1,0 +1,16 @@
+{
+  "name": "Hotmart Notificaciones",
+  "short_name": "Hotmart",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#FF5A00",
+  "icons": [
+    {
+      "src": "./hotmart-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
