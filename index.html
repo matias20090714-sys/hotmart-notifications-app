@@ -6,27 +6,28 @@
   <title>Hotmart Notificaciones en Ráfaga</title>
   <meta name="description" content="Generador de notificaciones reales de Hotmart con sonido de comisiones y ráfaga para iPhone y Android.">
   
-  <!-- Apple iOS & Web App Icons (PNG Oficial) -->
-  <link rel="icon" type="image/png" href="./hotmart-icon.png">
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <!-- Apple iOS & Web App Icons (Con Cache Buster v=3) -->
+  <link rel="icon" type="image/png" href="./hotmart-icon.png?v=3">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=3">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Hotmart">
   
-  <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="manifest" href="./manifest.json?v=3">
+  <link rel="stylesheet" href="./styles.css?v=3">
+  
   <!-- Audio Oficial Hotmart -->
-  <audio id="hotmartAudio" src="./hotmart-sound.wav" preload="auto"></audio>
+  <audio id="hotmartAudio" src="./hotmart-sound.wav?v=3" preload="auto"></audio>
 </head>
 <body>
 
-  <!-- Floating iOS Notification Overlay (Banners reales en vivo en la pantalla del celular) -->
+  <!-- Floating iOS Notification Overlay (Banners en la pantalla del celular) -->
   <div class="ios-floating-overlay" id="iosFloatingOverlay"></div>
 
   <!-- Header -->
   <header class="app-header">
     <div class="brand">
-      <img src="./hotmart-icon.png" alt="Hotmart Logo" class="brand-icon">
+      <img src="./hotmart-icon.png?v=3" alt="Hotmart Logo" class="brand-icon" id="headerLogo">
       <div class="brand-info">
         <h1>Hotmart Live Burst <span class="badge-live">En Vivo</span></h1>
         <p>Notificaciones Reales en tu Teléfono</p>
@@ -140,17 +141,17 @@
 
             <div class="form-item">
               <label for="minAmountInput">Mínimo:</label>
-              <input type="number" id="minAmountInput" class="input-field" value="27" min="1">
+              <input type="number" id="minAmountInput" class="input-field" value="17.42" step="0.01" min="1">
             </div>
 
             <div class="form-item">
               <label for="maxAmountInput">Máximo:</label>
-              <input type="number" id="maxAmountInput" class="input-field" value="147" min="1">
+              <input type="number" id="maxAmountInput" class="input-field" value="17.45" step="0.01" min="1">
             </div>
 
             <div class="form-item">
               <label for="customProductInput">Producto (Opcional):</label>
-              <input type="text" id="customProductInput" class="input-field" placeholder="Nombre del producto">
+              <input type="text" id="customProductInput" class="input-field" placeholder="Nombre específico">
             </div>
           </div>
 
@@ -180,9 +181,7 @@
     <section class="phone-simulator-col">
       <div class="phone-frame">
         
-        <div class="phone-wallpaper">
-          <div class="wallpaper-blob"></div>
-        </div>
+        <div class="phone-wallpaper"></div>
 
         <div class="phone-screen">
           
@@ -190,10 +189,10 @@
             <div class="dynamic-island" id="dynamicIsland">
               <div class="island-camera"></div>
               <div class="island-content">
-                <img src="./hotmart-icon.png" class="island-icon" alt="Hotmart">
+                <img src="./hotmart-icon.png?v=3" class="island-icon" alt="Hotmart">
                 <div class="island-text">
-                  <span class="island-title" id="islandTitle">¡Venta Realizada!</span>
-                  <span class="island-sub" id="islandSub">+US$ 47.00</span>
+                  <span class="island-title" id="islandTitle">Venta realizada</span>
+                  <span class="island-sub" id="islandSub">+US$ 17.45</span>
                 </div>
               </div>
               <div class="island-sensor"></div>
@@ -201,17 +200,12 @@
           </div>
 
           <div class="phone-statusbar">
-            <span class="statusbar-carrier">Hotmart 5G</span>
+            <span class="statusbar-carrier">00:05</span>
             <div class="statusbar-icons">
               <span>📶</span>
               <span>5G</span>
-              <span>🔋 100%</span>
+              <span>🔋 47%</span>
             </div>
-          </div>
-
-          <div class="phone-lock-clock">
-            <div class="lock-date" id="lockDate">Lunes, 24 de agosto</div>
-            <div class="lock-time" id="lockTime">20:15</div>
           </div>
 
           <div class="notification-feed" id="notificationFeed"></div>
@@ -230,6 +224,6 @@
 
   <div class="toast-msg" id="toast"></div>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=3"></script>
 </body>
 </html>
