@@ -284,7 +284,7 @@ function showFloatingIOSBanner(sale) {
   const banner = document.createElement('div');
   banner.className = 'ios-floating-banner';
   banner.innerHTML = `
-    <img src="./hotmart-icon.png" alt="Hotmart" class="ios-floating-icon" />
+    <img src="./hotmart-icon.png?v=3" alt="Hotmart" class="ios-floating-icon" />
     <div class="ios-floating-body">
       <div class="ios-floating-header">
         <span class="ios-floating-title">${sale.title}</span>
@@ -429,7 +429,7 @@ function renderBannerToFeed(sale) {
   const banner = document.createElement('div');
   banner.className = 'hotmart-banner';
   banner.innerHTML = `
-    <img src="./hotmart-icon.png" alt="Hotmart" class="banner-app-icon" />
+    <img src="./hotmart-icon.png?v=3" alt="Hotmart" class="banner-app-icon" />
     <div class="banner-content">
       <div class="banner-header">
         <span class="banner-title">${sale.title}</span>
