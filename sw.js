@@ -1,19 +1,27 @@
-// Service Worker para Notificaciones Nativas en iPhone (iOS) y Android vía Apple APNs & Web Push
+const CACHE_NAME = 'hotmart-v3';
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((k) => {
+          if (k !== CACHE_NAME) return caches.delete(k);
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-// ESCUCHADOR DE PUSH REAL DESDE EL SERVIDOR (Apple APNs)
 self.addEventListener('push', (event) => {
   let data = {
-    title: '¡Venta realizada!',
-    body: 'Has recibido una nueva comisión en Hotmart.',
-    icon: './hotmart-icon.png',
-    badge: './hotmart-icon.png'
+    title: 'Venta realizada con Tarjeta...',
+    body: 'Tu comisión: US$ 17.45 - HP2295266365',
+    icon: './hotmart-icon.png?v=3',
+    badge: './hotmart-icon.png?v=3'
   };
 
   if (event.data) {
@@ -26,8 +34,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || './hotmart-icon.png',
-    badge: data.badge || './hotmart-icon.png',
+    icon: data.icon || './hotmart-icon.png?v=3',
+    badge: data.badge || './hotmart-icon.png?v=3',
     vibrate: [200, 100, 200],
     tag: 'hotmart-sale-' + Date.now(),
     renotify: true,
@@ -39,7 +47,6 @@ self.addEventListener('push', (event) => {
   );
 });
 
-// Click en la notificación en el centro de notificaciones de iOS
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
