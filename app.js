@@ -70,6 +70,8 @@ const elements = {
   headerLogo: document.getElementById('headerLogo'),
   headerTitle: document.getElementById('headerTitle'),
   headerSubtitle: document.getElementById('headerSubtitle'),
+  headerPillFalko: document.getElementById('headerPillFalko'),
+  headerPillHotmart: document.getElementById('headerPillHotmart'),
   tabFalko: document.getElementById('tabFalko'),
   tabHotmart: document.getElementById('tabHotmart'),
   btnToggleBurst: document.getElementById('btnToggleBurst'),
@@ -126,7 +128,13 @@ function setPlatform(platformKey) {
     elements.tabHotmart.classList.toggle('active', plat.id === 'hotmart');
   }
 
-  // 3. Update Header & Dynamic Island
+  // 3. Update header pills active state
+  if (elements.headerPillFalko && elements.headerPillHotmart) {
+    elements.headerPillFalko.classList.toggle('active', plat.id === 'falko');
+    elements.headerPillHotmart.classList.toggle('active', plat.id === 'hotmart');
+  }
+
+  // 4. Update Header & Dynamic Island
   if (elements.headerLogo) elements.headerLogo.src = plat.logo;
   if (elements.islandLogo) elements.islandLogo.src = plat.logo;
   if (elements.headerTitle) {
@@ -136,7 +144,7 @@ function setPlatform(platformKey) {
     elements.headerSubtitle.textContent = plat.headerSubtitle;
   }
 
-  // 4. Update Favicon dynamically
+  // 5. Update Favicon dynamically
   const favicon = document.getElementById('dynamicFavicon');
   if (favicon) favicon.href = plat.logo;
 
@@ -643,6 +651,12 @@ function initEvents() {
   }
   if (elements.tabHotmart) {
     elements.tabHotmart.addEventListener('click', () => setPlatform('hotmart'));
+  }
+  if (elements.headerPillFalko) {
+    elements.headerPillFalko.addEventListener('click', () => setPlatform('falko'));
+  }
+  if (elements.headerPillHotmart) {
+    elements.headerPillHotmart.addEventListener('click', () => setPlatform('hotmart'));
   }
 
   elements.btnToggleBurst.addEventListener('click', toggleBurst);
