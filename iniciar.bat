@@ -1,4 +1,6 @@
 @echo off
-title Hotmart Notificaciones en Vivo - Servidor Local
-powershell -ExecutionPolicy Bypass -File "%~dp0server.ps1"
+title Falko Notificaciones en Vivo
+echo Iniciando Servidor Falko...
+start http://localhost:3000
+node server.js
 pause
