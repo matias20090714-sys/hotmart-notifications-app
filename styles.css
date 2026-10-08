@@ -1,20 +1,53 @@
 :root {
-  --falko-cyan: #00E5FF;
-  --falko-blue: #0088FF;
-  --falko-deep: #0051FF;
-  --falko-grad: linear-gradient(135deg, #00E5FF 0%, #0088FF 50%, #0051FF 100%);
-  --falko-glow: 0 0 20px rgba(0, 229, 255, 0.45);
-  --falko-dark: #07090E;
-  --falko-card: #0F131E;
-  --falko-border: rgba(0, 229, 255, 0.16);
-  --falko-text: #f8fafc;
-  --falko-subtext: #94a3b8;
-  --falko-success: #10B981;
-  /* Exact iOS Notification card with frosted glass */
-  --ios-banner-bg: rgba(220, 245, 255, 0.85);
-  --ios-banner-border: rgba(255, 255, 255, 0.65);
+  /* Default Falko Neon Cyan variables */
+  --brand-primary: #00E5FF;
+  --brand-secondary: #0088FF;
+  --brand-deep: #0051FF;
+  --brand-grad: linear-gradient(135deg, #00E5FF 0%, #0088FF 50%, #0051FF 100%);
+  --brand-shadow: rgba(0, 229, 255, 0.4);
+  --brand-border: rgba(0, 229, 255, 0.25);
+  --brand-dark: #07090E;
+  --brand-card: #0F131E;
+  --brand-text: #f8fafc;
+  --brand-subtext: #94a3b8;
+  --brand-success: #10B981;
+  --btn-text: #030a16;
+  
+  /* iOS Banner Styling */
+  --ios-banner-bg: rgba(225, 245, 255, 0.82);
+  --ios-banner-border: rgba(255, 255, 255, 0.7);
   --ios-text-title: #0f172a;
   --ios-text-body: #334155;
+}
+
+body.theme-falko {
+  --brand-primary: #00E5FF;
+  --brand-secondary: #0088FF;
+  --brand-deep: #0051FF;
+  --brand-grad: linear-gradient(135deg, #00E5FF 0%, #0088FF 50%, #0051FF 100%);
+  --brand-shadow: rgba(0, 229, 255, 0.45);
+  --brand-border: rgba(0, 229, 255, 0.25);
+  --brand-dark: #07090E;
+  --brand-card: #0F131E;
+  --btn-text: #030a16;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(0, 81, 255, 0.15) 0%, transparent 45%);
+}
+
+body.theme-hotmart {
+  --brand-primary: #FF4D15;
+  --brand-secondary: #FF3823;
+  --brand-deep: #EA1D2C;
+  --brand-grad: linear-gradient(135deg, #FF4D15 0%, #FF3823 50%, #EA1D2C 100%);
+  --brand-shadow: rgba(255, 77, 21, 0.45);
+  --brand-border: rgba(255, 77, 21, 0.25);
+  --brand-dark: #0b0d13;
+  --brand-card: #141722;
+  --btn-text: #ffffff;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(255, 77, 21, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(234, 29, 44, 0.12) 0%, transparent 45%);
 }
 
 * {
@@ -23,18 +56,16 @@
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 body {
-  background-color: var(--falko-dark);
-  color: var(--falko-text);
+  background-color: var(--brand-dark);
+  color: var(--brand-text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 85% 85%, rgba(0, 81, 255, 0.15) 0%, transparent 45%);
 }
 
 /* Floating Real-Time iOS Banner Overlay */
@@ -67,7 +98,7 @@ body {
   align-items: center;
   box-shadow: 
     0 12px 30px rgba(0, 0, 0, 0.35),
-    0 2px 8px rgba(0, 229, 255, 0.15);
+    0 2px 8px var(--brand-shadow);
   animation: slideDownFloating 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -124,7 +155,7 @@ body {
   background: rgba(15, 19, 30, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--falko-border);
+  border-bottom: 1px solid var(--brand-border);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -150,7 +181,8 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 11px;
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 16px var(--brand-shadow);
+  object-fit: cover;
 }
 
 .brand-info h1 {
@@ -160,7 +192,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #ffffff 40%, #00E5FF 100%);
+  background: linear-gradient(135deg, #ffffff 40%, var(--brand-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -168,25 +200,25 @@ body {
 .badge-live {
   font-size: 0.65rem;
   padding: 0.2rem 0.5rem;
-  background: rgba(0, 229, 255, 0.15);
-  color: var(--falko-cyan);
-  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-border);
   border-radius: 20px;
   font-weight: 700;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 4px;
-  -webkit-text-fill-color: var(--falko-cyan);
+  -webkit-text-fill-color: var(--brand-primary);
 }
 
 .badge-live::before {
   content: '';
   width: 6px;
   height: 6px;
-  background: var(--falko-cyan);
+  background: var(--brand-primary);
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--falko-cyan);
+  box-shadow: 0 0 8px var(--brand-primary);
   animation: pulse 1.5s infinite;
 }
 
@@ -197,7 +229,7 @@ body {
 
 .brand-info p {
   font-size: 0.75rem;
-  color: var(--falko-subtext);
+  color: var(--brand-subtext);
 }
 
 /* iOS Alert Box */
@@ -205,8 +237,8 @@ body {
   max-width: 1200px;
   margin: 0.75rem auto 0 auto;
   padding: 0.85rem 1.25rem;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--brand-border);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -236,10 +268,82 @@ body {
   }
 }
 
+/* Platform Switcher Tabs */
+.platform-selector-card {
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--brand-border);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+}
+
+.platform-selector-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--brand-subtext);
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.5px;
+}
+
+.platform-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.platform-tab {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: var(--brand-text);
+  transition: all 0.2s ease;
+}
+
+.platform-tab:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.platform-tab.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 16px var(--brand-shadow);
+}
+
+.tab-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.tab-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tab-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.tab-sub {
+  font-size: 0.7rem;
+  color: var(--brand-subtext);
+  font-weight: 600;
+}
+
 /* Cards */
 .card {
-  background: var(--falko-card);
-  border: 1px solid var(--falko-border);
+  background: var(--brand-card);
+  border: 1px solid var(--brand-border);
   border-radius: 20px;
   padding: 1.35rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
@@ -255,7 +359,7 @@ body {
 
 .stat-box {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--falko-border);
+  border: 1px solid var(--brand-border);
   border-radius: 14px;
   padding: 0.85rem;
   text-align: center;
@@ -268,12 +372,12 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: var(--falko-grad);
+  background: var(--brand-grad);
 }
 
 .stat-label {
   font-size: 0.7rem;
-  color: var(--falko-subtext);
+  color: var(--brand-subtext);
   text-transform: uppercase;
   margin-bottom: 0.2rem;
 }
@@ -285,8 +389,8 @@ body {
 }
 
 .stat-val.highlight {
-  color: var(--falko-cyan);
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  color: var(--brand-primary);
+  text-shadow: 0 0 10px var(--brand-shadow);
 }
 
 /* Actions */
@@ -304,9 +408,9 @@ body {
 
 .btn-primary {
   flex: 2;
-  background: var(--falko-grad);
+  background: var(--brand-grad);
   border: none;
-  color: #030a16;
+  color: var(--btn-text);
   padding: 0.95rem 1.25rem;
   border-radius: 14px;
   font-size: 1.05rem;
@@ -316,13 +420,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.35);
+  box-shadow: 0 8px 25px var(--brand-shadow);
   transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 229, 255, 0.55);
+  box-shadow: 0 12px 30px var(--brand-shadow);
 }
 
 .btn-primary.running {
@@ -334,7 +438,7 @@ body {
 .btn-secondary {
   flex: 1;
   background: rgba(255, 255, 255, 0.07);
-  border: 1px solid var(--falko-border);
+  border: 1px solid var(--brand-border);
   color: #fff;
   padding: 0.95rem 1rem;
   border-radius: 14px;
@@ -350,14 +454,14 @@ body {
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: var(--falko-cyan);
+  border-color: var(--brand-primary);
 }
 
 .btn-push-native {
   width: 100%;
-  background: rgba(0, 229, 255, 0.1);
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  color: var(--falko-cyan);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--brand-border);
+  color: var(--brand-primary);
   padding: 0.85rem 1rem;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -371,7 +475,7 @@ body {
 }
 
 .btn-push-native:hover {
-  background: rgba(0, 229, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .btn-push-native.active {
@@ -384,7 +488,7 @@ body {
 .count-selector-group {
   margin-bottom: 1.25rem;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--falko-border);
+  border: 1px solid var(--brand-border);
   border-radius: 14px;
   padding: 0.9rem 1rem;
 }
@@ -402,10 +506,11 @@ body {
 .count-progress-badge {
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
-  background: rgba(0, 229, 255, 0.18);
-  color: var(--falko-cyan);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--brand-primary);
   border-radius: 8px;
   font-weight: 700;
+  border: 1px solid var(--brand-border);
 }
 
 .count-chips-row {
@@ -417,8 +522,8 @@ body {
 
 .count-chip {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--falko-border);
-  color: var(--falko-subtext);
+  border: 1px solid var(--brand-border);
+  color: var(--brand-subtext);
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -428,11 +533,11 @@ body {
 }
 
 .count-chip.active {
-  background: var(--falko-cyan);
-  color: #030a16;
+  background: var(--brand-primary);
+  color: var(--btn-text);
   font-weight: 800;
-  border-color: var(--falko-cyan);
-  box-shadow: 0 2px 10px rgba(0, 229, 255, 0.4);
+  border-color: var(--brand-primary);
+  box-shadow: 0 2px 10px var(--brand-shadow);
 }
 
 .custom-count-wrapper {
@@ -443,7 +548,7 @@ body {
 
 .custom-count-wrapper label {
   font-size: 0.78rem;
-  color: var(--falko-subtext);
+  color: var(--brand-subtext);
 }
 
 /* Slider */
@@ -458,11 +563,11 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: var(--falko-subtext);
+  color: var(--brand-subtext);
 }
 
 .speed-badge {
-  color: var(--falko-cyan);
+  color: var(--brand-primary);
   font-weight: 700;
 }
 
@@ -481,14 +586,14 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--falko-cyan);
+  background: var(--brand-primary);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+  box-shadow: 0 0 10px var(--brand-shadow);
 }
 
 /* Form Settings */
 .config-group {
-  border-top: 1px solid var(--falko-border);
+  border-top: 1px solid var(--brand-border);
   padding-top: 1.25rem;
 }
 
@@ -521,12 +626,12 @@ body {
 .form-item label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--falko-subtext);
+  color: var(--brand-subtext);
 }
 
 .input-field, .select-field {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--falko-border);
+  border: 1px solid var(--brand-border);
   color: #fff;
   padding: 0.7rem 0.85rem;
   border-radius: 10px;
@@ -536,7 +641,7 @@ body {
 }
 
 .input-field:focus, .select-field:focus {
-  border-color: var(--falko-cyan);
+  border-color: var(--brand-primary);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -557,7 +662,7 @@ body {
   flex: 1;
   min-width: 130px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--falko-border);
+  border: 1px solid var(--brand-border);
   padding: 0.75rem;
   border-radius: 12px;
   display: flex;
@@ -607,7 +712,7 @@ body {
 }
 
 input:checked + .slider-round {
-  background: var(--falko-grad);
+  background: var(--brand-grad);
 }
 
 input:checked + .slider-round:before {
@@ -646,7 +751,6 @@ input:checked + .slider-round:before {
   }
 }
 
-/* Tropical beach background matching screenshot */
 .phone-wallpaper {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -687,7 +791,7 @@ input:checked + .slider-round:before {
   width: 92%;
   height: 52px;
   background: #0b0f19;
-  border: 1px solid rgba(0, 229, 255, 0.4);
+  border: 1px solid var(--brand-border);
   box-shadow: 0 10px 25px rgba(0,0,0,0.8);
 }
 
@@ -720,7 +824,8 @@ input:checked + .slider-round:before {
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  box-shadow: 0 0 10px var(--brand-shadow);
+  object-fit: cover;
 }
 
 .island-text {
@@ -737,7 +842,7 @@ input:checked + .slider-round:before {
 
 .island-sub {
   font-size: 0.65rem;
-  color: #00E5FF;
+  color: var(--brand-primary);
   font-weight: 700;
 }
 
@@ -776,7 +881,7 @@ input:checked + .slider-round:before {
   display: none;
 }
 
-/* Falko Exact Notification Card */
+/* Exact Notification Card */
 .hotmart-banner {
   background: var(--ios-banner-bg);
   backdrop-filter: blur(30px);
@@ -876,13 +981,13 @@ input:checked + .slider-round:before {
   transform: translateX(-50%) translateY(100px);
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--falko-cyan);
+  border: 1px solid var(--brand-primary);
   color: #fff;
   padding: 0.75rem 1.4rem;
   border-radius: 30px;
   font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(0, 229, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--brand-shadow);
   z-index: 10000;
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
