@@ -144,11 +144,21 @@ function setPlatform(platformKey) {
     elements.headerSubtitle.textContent = plat.headerSubtitle;
   }
 
-  // 5. Update Favicon dynamically
+  // 5. Update Favicon and Apple Touch Icon for Home Screen
   const favicon = document.getElementById('dynamicFavicon');
   if (favicon) favicon.href = plat.logo;
 
-  showToast(`🎯 Plataforma cambiada a: ${plat.name}`);
+  const appleIcon = document.getElementById('dynamicAppleIcon');
+  if (appleIcon) {
+    appleIcon.href = plat.id === 'hotmart' ? './hotmart-icon.png?v=6' : './apple-touch-icon.png?v=6';
+  }
+
+  document.title = `${plat.name} - Notificaciones en Ráfaga`;
+  
+  const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (appleTitleMeta) appleTitleMeta.setAttribute('content', plat.name);
+
+  showToast(`🎯 Plataforma seleccionada: ${plat.name}`);
 }
 
 // ===================================================
@@ -729,7 +739,16 @@ function initEvents() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initEvents();
-  setPlatform('falko'); // default platform
+
+  // Read URL query parameter if present (e.g. ?p=hotmart or ?p=falko)
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedPlatform = urlParams.get('p') || urlParams.get('platform');
+  if (requestedPlatform === 'hotmart' || requestedPlatform === 'falko') {
+    setPlatform(requestedPlatform);
+  } else {
+    setPlatform('falko'); // default platform
+  }
+
   updateStatsDisplay();
 
   // Initial preview feed
