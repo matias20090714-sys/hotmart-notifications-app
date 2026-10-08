@@ -232,6 +232,53 @@ body {
   color: var(--brand-subtext);
 }
 
+/* Header Switch Pills */
+.header-switch-pills {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid var(--brand-border);
+  gap: 4px;
+}
+
+.pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--brand-subtext);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.pill-btn.active {
+  background: var(--brand-primary);
+  color: var(--btn-text);
+  box-shadow: 0 0 12px var(--brand-shadow);
+}
+
+.pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.falko-dot {
+  background: #00E5FF;
+  box-shadow: 0 0 6px #00E5FF;
+}
+
+.hotmart-dot {
+  background: #FF4D15;
+  box-shadow: 0 0 6px #FF4D15;
+}
+
 /* iOS Alert Box */
 .ios-alert-card {
   max-width: 1200px;
