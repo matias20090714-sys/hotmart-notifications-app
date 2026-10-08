@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hotmart-v3';
+const CACHE_NAME = 'falko-v4';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -19,9 +19,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   let data = {
     title: 'Venta realizada con Tarjeta...',
-    body: 'Tu comisión: US$ 17.45 - HP2295266365',
-    icon: './hotmart-icon.png?v=3',
-    badge: './hotmart-icon.png?v=3'
+    body: 'Tu comisión: US$ 17.45 - FK2295266365',
+    icon: './falko-icon.png?v=4',
+    badge: './falko-icon.png?v=4'
   };
 
   if (event.data) {
@@ -34,10 +34,10 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || './hotmart-icon.png?v=3',
-    badge: data.badge || './hotmart-icon.png?v=3',
+    icon: data.icon || './falko-icon.png?v=4',
+    badge: data.badge || './falko-icon.png?v=4',
     vibrate: [200, 100, 200],
-    tag: 'hotmart-sale-' + Date.now(),
+    tag: 'falko-sale-' + Date.now(),
     renotify: true,
     data: data.data || { url: '/' }
   };
