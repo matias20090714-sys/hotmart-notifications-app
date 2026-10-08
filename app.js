@@ -1,5 +1,5 @@
 // ===================================================
-// HOTMART EXACT NOTIFICATIONS GENERATOR (iOS APNs & Web)
+// FALKO EXACT NOTIFICATIONS GENERATOR (iOS APNs & Web)
 // ===================================================
 
 const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
@@ -67,7 +67,7 @@ const CURRENCY_MAP = {
 };
 
 // ===================================================
-// AUDIO SYSTEM (Real Hotmart Cash Register Audio File & Web Audio)
+// AUDIO SYSTEM (Real Cash Register Audio File & Web Audio)
 // ===================================================
 class SoundFX {
   constructor() {
@@ -77,7 +77,7 @@ class SoundFX {
 
   init() {
     if (!this.audioEl) {
-      this.audioEl = document.getElementById('hotmartAudio');
+      this.audioEl = document.getElementById('falkoAudio');
     }
     if (!this.ctx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -128,7 +128,7 @@ class SoundFX {
       osc1.start(now);
       osc1.stop(now + 0.18);
 
-      // Timbre Hotmart ("Ka-Ching!")
+      // Timbre Falko / Cash ("Ka-Ching!")
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
       osc2.type = 'triangle';
@@ -169,7 +169,7 @@ function urlBase64ToUint8Array(base64String) {
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      swRegistration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+      swRegistration = await navigator.serviceWorker.register('./sw.js?v=4', { scope: './' });
       pushSubscription = await swRegistration.pushManager.getSubscription();
       if (pushSubscription) {
         state.pushEnabled = true;
@@ -208,11 +208,11 @@ async function requestNativePushPermission() {
 
     state.pushEnabled = true;
     updatePushBtnState(true);
-    showToast("🔔 ¡Notificaciones activadas en tu iPhone!");
+    showToast("🔔 ¡Notificaciones Falko activadas en tu iPhone!");
 
     dispatchSaleNotification({
       title: "Venta realizada con Tarjeta...",
-      body: "Tu comisión: US$ 17.45 - HP2295266365",
+      body: "Tu comisión: US$ 17.45 - FK2295266365",
       formattedAmount: "US$ 17.45"
     });
 
@@ -236,7 +236,7 @@ function updatePushBtnState(active) {
 }
 
 async function dispatchSaleNotification(sale) {
-  const iconUrl = new URL('./hotmart-icon.png', window.location.href).href;
+  const iconUrl = new URL('./falko-icon.png?v=4', window.location.href).href;
 
   if (pushSubscription) {
     fetch('/api/push', {
@@ -256,7 +256,7 @@ async function dispatchSaleNotification(sale) {
       body: sale.body,
       icon: iconUrl,
       badge: iconUrl,
-      tag: 'hotmart-' + Date.now(),
+      tag: 'falko-' + Date.now(),
       renotify: true,
       silent: false,
       vibrate: [200, 100, 200]
@@ -267,7 +267,7 @@ async function dispatchSaleNotification(sale) {
         body: sale.body,
         icon: iconUrl,
         badge: iconUrl,
-        tag: 'hotmart-' + Date.now(),
+        tag: 'falko-' + Date.now(),
         renotify: true
       });
     } catch (e) {}
@@ -275,7 +275,7 @@ async function dispatchSaleNotification(sale) {
 }
 
 // ===================================================
-// FLOATING REAL-TIME iOS BANNER (Matching Screenshot)
+// FLOATING REAL-TIME iOS BANNER (Matching Falko)
 // ===================================================
 function showFloatingIOSBanner(sale) {
   const overlay = elements.iosFloatingOverlay;
@@ -284,7 +284,7 @@ function showFloatingIOSBanner(sale) {
   const banner = document.createElement('div');
   banner.className = 'ios-floating-banner';
   banner.innerHTML = `
-    <img src="./hotmart-icon.png?v=3" alt="Hotmart" class="ios-floating-icon" />
+    <img src="./falko-icon.png?v=4" alt="Falko" class="ios-floating-icon" />
     <div class="ios-floating-body">
       <div class="ios-floating-header">
         <span class="ios-floating-title">${sale.title}</span>
@@ -337,7 +337,7 @@ function releaseWakeLock() {
 }
 
 // ===================================================
-// EXACT HOTMART TRANSACTION DATA BUILDER
+// EXACT FALKO TRANSACTION DATA BUILDER
 // ===================================================
 function generateSaleData() {
   const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.USD;
@@ -351,28 +351,34 @@ function generateSaleData() {
     amount = (Math.random() * (max - min) + min).toFixed(2);
   }
 
-  // Generar código de transacción Hotmart exacto: HP + 10 dígitos (ej: HP2295266365)
-  const hpCode = 'HP' + Math.floor(1000000000 + Math.random() * 9000000000);
+  // Generar código de transacción Falko exacto: FK + 10 dígitos (ej: FK2295266365)
+  const fkCode = 'FK' + Math.floor(1000000000 + Math.random() * 9000000000);
 
-  // Formato exacto del screenshot
+  const customProd = elements.customProductInput ? elements.customProductInput.value.trim() : '';
+
+  // Formatos realistas para Falko
   const titles = [
     "Venta realizada con Tarjeta...",
+    "Venta efectuada - Falko Pay",
+    "¡Venta realizada en Falko!",
     "Venta realizada con Tarjeta...",
-    "Venta efectuada",
-    "Venta realizada con Tarjeta...",
-    "Venta realizada con PayPal..."
+    "Comisión acreditada en Falko"
   ];
   const title = titles[Math.floor(Math.random() * titles.length)];
 
   const formattedAmount = `${curr.prefix}${Number(amount).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const body = `Tu comisión: ${formattedAmount} - ${hpCode}`;
+  
+  let body = `Tu comisión: ${formattedAmount} - ${fkCode}`;
+  if (customProd) {
+    body = `${customProd} - Tu comisión: ${formattedAmount} - ${fkCode}`;
+  }
 
   return {
     title,
     body,
     amount: parseFloat(amount),
     formattedAmount,
-    hpCode,
+    fkCode,
     time: "ahora"
   };
 }
@@ -429,7 +435,7 @@ function renderBannerToFeed(sale) {
   const banner = document.createElement('div');
   banner.className = 'hotmart-banner';
   banner.innerHTML = `
-    <img src="./hotmart-icon.png?v=3" alt="Hotmart" class="banner-app-icon" />
+    <img src="./falko-icon.png?v=4" alt="Falko" class="banner-app-icon" />
     <div class="banner-content">
       <div class="banner-header">
         <span class="banner-title">${sale.title}</span>
@@ -465,7 +471,7 @@ function startBurst() {
   elements.btnToggleBurst.innerHTML = `<span>⏹️</span> Detener Ráfaga`;
 
   updateStatsDisplay();
-  showToast("🔥 ¡Ráfaga de notificaciones iniciada!");
+  showToast("🔥 ¡Ráfaga de notificaciones Falko iniciada!");
 
   function loop() {
     if (!state.isRunning) return;
@@ -630,23 +636,23 @@ document.addEventListener('DOMContentLoaded', () => {
   initEvents();
   updateStatsDisplay();
 
-  // Initial preview matching user screenshot
+  // Initial preview matching Falko
   setTimeout(() => {
     renderBannerToFeed({
       title: "Venta realizada con Tarjeta...",
-      body: "Tu comisión: US$ 17.45 - HP2295266365",
+      body: "Tu comisión: US$ 17.45 - FK2295266365",
       formattedAmount: "US$ 17.45",
       time: "ahora"
     });
     renderBannerToFeed({
-      title: "Venta realizada con Tarjeta...",
-      body: "Tu comisión: US$ 17.44 - HP1353385734",
+      title: "¡Venta realizada en Falko!",
+      body: "Tu comisión: US$ 17.44 - FK1353385734",
       formattedAmount: "US$ 17.44",
       time: "ahora"
     });
     renderBannerToFeed({
-      title: "Venta efectuada",
-      body: "Tu Comisión: US$ 17.41 - HP0900520954",
+      title: "Venta efectuada - Falko Pay",
+      body: "Tu comisión: US$ 17.41 - FK0900520954",
       formattedAmount: "US$ 17.41",
       time: "ahora"
     });
