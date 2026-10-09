@@ -205,7 +205,7 @@ function setPlatform(platformKey, autoAdjustDefaults = true) {
     else appleIcon.href = './apple-touch-icon.png?v=7';
   }
 
-  document.title = `${plat.name} - Notificaciones en Ráfaga`;
+  document.title = plat.name;
   
   const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
   if (appleTitleMeta) appleTitleMeta.setAttribute('content', plat.name);
