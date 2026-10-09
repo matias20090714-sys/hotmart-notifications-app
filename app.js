@@ -582,28 +582,59 @@ function triggerDynamicIsland(sale) {
   }, 1300);
 }
 
-function renderBannerToFeed(sale) {
+function openFullscreenLock() {
+  const modal = document.getElementById('fullscreenLockModal');
+  if (modal) {
+    modal.classList.add('active');
+    sfx.init();
+    showToast("📱 Pantalla de Bloqueo Real Activada");
+  }
+}
+
+function closeFullscreenLock() {
+  const modal = document.getElementById('fullscreenLockModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function clearFeed() {
   const feed = elements.notificationFeed;
-  if (!feed) return;
-  
+  if (feed) feed.innerHTML = '';
+  const fsFeed = document.getElementById('fullscreenFeed');
+  if (fsFeed) fsFeed.innerHTML = '';
+  showToast("🗑️ Notificaciones limpiadas");
+}
+
+function renderBannerToFeed(sale) {
   const plat = PLATFORMS[sale.platform || state.platform];
-  const banner = document.createElement('div');
-  banner.className = 'hotmart-banner';
-  banner.innerHTML = `
-    <img src="${plat.logo}" alt="${plat.name}" class="banner-app-icon" />
-    <div class="banner-content">
-      <div class="banner-header">
-        <span class="banner-title">${sale.title}</span>
-        <span class="banner-time">Ahora</span>
+  const feed = elements.notificationFeed;
+  const fsFeed = document.getElementById('fullscreenFeed');
+  
+  function createBannerEl() {
+    const banner = document.createElement('div');
+    banner.className = 'hotmart-banner';
+    banner.innerHTML = `
+      <img src="${plat.logo}" alt="${plat.name}" class="banner-app-icon" />
+      <div class="banner-content">
+        <div class="banner-header">
+          <span class="banner-title">${sale.title}</span>
+          <span class="banner-time">Ahora</span>
+        </div>
+        <div class="banner-body">${sale.body}</div>
       </div>
-      <div class="banner-body">${sale.body}</div>
-    </div>
-  `;
+    `;
+    return banner;
+  }
 
-  feed.insertBefore(banner, feed.firstChild);
+  if (feed) {
+    const banner = createBannerEl();
+    feed.insertBefore(banner, feed.firstChild);
+    if (feed.children.length > 25) feed.removeChild(feed.lastChild);
+  }
 
-  if (feed.children.length > 25) {
-    feed.removeChild(feed.lastChild);
+  if (fsFeed) {
+    const banner = createBannerEl();
+    fsFeed.insertBefore(banner, fsFeed.firstChild);
+    if (fsFeed.children.length > 25) fsFeed.removeChild(fsFeed.lastChild);
   }
 }
 
