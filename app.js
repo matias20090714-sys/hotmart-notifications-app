@@ -1,5 +1,5 @@
 // ===================================================
-// MULTI-PLATFORM NOTIFICATIONS SIMULATOR (Falko & Hotmart)
+// MULTI-PLATFORM NOTIFICATIONS SIMULATOR (Falko, Hotmart & Midinero)
 // ===================================================
 
 const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
@@ -12,7 +12,10 @@ const PLATFORMS = {
     id: 'falko',
     name: 'Falko',
     codePrefix: 'FK',
-    logo: './falko-icon.png?v=5',
+    defaultCurrency: 'USD',
+    defaultMin: 17.42,
+    defaultMax: 17.45,
+    logo: './falko-icon.png?v=7',
     themeClass: 'theme-falko',
     headerTitle: 'Falko Live Burst',
     headerSubtitle: 'Notificaciones Reales en tu Teléfono',
@@ -23,13 +26,20 @@ const PLATFORMS = {
       "Comisión acreditada en Falko",
       "Venta realizada con Tarjeta...",
       "¡Nueva venta en Falko!"
-    ]
+    ],
+    formatBody: (amountStr, code, customProd) => {
+      if (customProd) return `${customProd} - Tu comisión: ${amountStr} - ${code}`;
+      return `Tu comisión: ${amountStr} - ${code}`;
+    }
   },
   hotmart: {
     id: 'hotmart',
     name: 'Hotmart',
     codePrefix: 'HP',
-    logo: './hotmart-icon.png?v=5',
+    defaultCurrency: 'USD',
+    defaultMin: 17.42,
+    defaultMax: 17.45,
+    logo: './hotmart-icon.png?v=7',
     themeClass: 'theme-hotmart',
     headerTitle: 'Hotmart Live Burst',
     headerSubtitle: 'Notificaciones Reales en tu Teléfono',
@@ -40,12 +50,40 @@ const PLATFORMS = {
       "Venta efectuada",
       "Venta realizada con PayPal...",
       "Venta realizada con Tarjeta..."
-    ]
+    ],
+    formatBody: (amountStr, code, customProd) => {
+      if (customProd) return `${customProd} - Tu comisión: ${amountStr} - ${code}`;
+      return `Tu comisión: ${amountStr} - ${code}`;
+    }
+  },
+  midinero: {
+    id: 'midinero',
+    name: 'Midinero',
+    codePrefix: 'MD',
+    defaultCurrency: 'UYU',
+    defaultMin: 3900,
+    defaultMax: 3900,
+    logo: './midinero-icon.png?v=7',
+    themeClass: 'theme-midinero',
+    headerTitle: 'Tarjeta Midinero Live',
+    headerSubtitle: 'Notificaciones Oficiales Midinero',
+    islandDefaultTitle: 'Recarga realizada con éxito',
+    titles: [
+      "Recarga realizada con éxito",
+      "Recarga realizada con éxito",
+      "Recarga realizada con éxito",
+      "Transferencia recibida",
+      "Acreditación de saldo"
+    ],
+    formatBody: (amountStr, code, customProd) => {
+      if (customProd) return `Se registró una recarga por ${amountStr} ${customProd}`;
+      return `Se registró una recarga por ${amountStr} en tu tarjeta Midinero`;
+    }
   }
 };
 
 const state = {
-  platform: 'falko', // 'falko' | 'hotmart'
+  platform: 'falko', // 'falko' | 'hotmart' | 'midinero'
   isRunning: false,
   timerId: null,
   totalSales: 0,
@@ -72,8 +110,10 @@ const elements = {
   headerSubtitle: document.getElementById('headerSubtitle'),
   headerPillFalko: document.getElementById('headerPillFalko'),
   headerPillHotmart: document.getElementById('headerPillHotmart'),
+  headerPillMidinero: document.getElementById('headerPillMidinero'),
   tabFalko: document.getElementById('tabFalko'),
   tabHotmart: document.getElementById('tabHotmart'),
+  tabMidinero: document.getElementById('tabMidinero'),
   btnToggleBurst: document.getElementById('btnToggleBurst'),
   btnSingleSale: document.getElementById('btnSingleSale'),
   btnEnablePush: document.getElementById('btnEnablePush'),
@@ -102,20 +142,21 @@ const elements = {
 };
 
 const CURRENCY_MAP = {
-  USD: { symbol: 'US$', prefix: 'US$ ' },
-  EUR: { symbol: '€', prefix: '€ ' },
-  BRL: { symbol: 'R$', prefix: 'R$ ' },
-  MXN: { symbol: 'MXN', prefix: '$ ' },
-  COP: { symbol: 'COP', prefix: '$ ' },
-  PEN: { symbol: 'S/', prefix: 'S/ ' },
-  ARS: { symbol: 'ARS', prefix: '$ ' },
-  CLP: { symbol: 'CLP', prefix: '$ ' }
+  UYU: { symbol: '$', prefix: '$', locale: 'es-UY' },
+  USD: { symbol: 'US$', prefix: 'US$ ', locale: 'es-ES' },
+  EUR: { symbol: '€', prefix: '€ ', locale: 'es-ES' },
+  BRL: { symbol: 'R$', prefix: 'R$ ', locale: 'pt-BR' },
+  MXN: { symbol: 'MXN', prefix: '$ ', locale: 'es-MX' },
+  COP: { symbol: 'COP', prefix: '$ ', locale: 'es-CO' },
+  PEN: { symbol: 'S/', prefix: 'S/ ', locale: 'es-PE' },
+  ARS: { symbol: 'ARS', prefix: '$ ', locale: 'es-AR' },
+  CLP: { symbol: 'CLP', prefix: '$ ', locale: 'es-CL' }
 };
 
 // ===================================================
 // PLATFORM SWITCHER
 // ===================================================
-function setPlatform(platformKey) {
+function setPlatform(platformKey, autoAdjustDefaults = true) {
   const plat = PLATFORMS[platformKey] || PLATFORMS.falko;
   state.platform = plat.id;
 
@@ -123,16 +164,14 @@ function setPlatform(platformKey) {
   document.body.className = plat.themeClass;
 
   // 2. Update tabs active state
-  if (elements.tabFalko && elements.tabHotmart) {
-    elements.tabFalko.classList.toggle('active', plat.id === 'falko');
-    elements.tabHotmart.classList.toggle('active', plat.id === 'hotmart');
-  }
+  if (elements.tabFalko) elements.tabFalko.classList.toggle('active', plat.id === 'falko');
+  if (elements.tabHotmart) elements.tabHotmart.classList.toggle('active', plat.id === 'hotmart');
+  if (elements.tabMidinero) elements.tabMidinero.classList.toggle('active', plat.id === 'midinero');
 
   // 3. Update header pills active state
-  if (elements.headerPillFalko && elements.headerPillHotmart) {
-    elements.headerPillFalko.classList.toggle('active', plat.id === 'falko');
-    elements.headerPillHotmart.classList.toggle('active', plat.id === 'hotmart');
-  }
+  if (elements.headerPillFalko) elements.headerPillFalko.classList.toggle('active', plat.id === 'falko');
+  if (elements.headerPillHotmart) elements.headerPillHotmart.classList.toggle('active', plat.id === 'hotmart');
+  if (elements.headerPillMidinero) elements.headerPillMidinero.classList.toggle('active', plat.id === 'midinero');
 
   // 4. Update Header & Dynamic Island
   if (elements.headerLogo) elements.headerLogo.src = plat.logo;
@@ -144,13 +183,26 @@ function setPlatform(platformKey) {
     elements.headerSubtitle.textContent = plat.headerSubtitle;
   }
 
-  // 5. Update Favicon and Apple Touch Icon for Home Screen
+  // 5. Auto adjust Currency and defaults if switching platforms
+  if (autoAdjustDefaults) {
+    state.currency = plat.defaultCurrency;
+    if (elements.currencySelect) elements.currencySelect.value = plat.defaultCurrency;
+
+    state.minAmount = plat.defaultMin;
+    state.maxAmount = plat.defaultMax;
+    if (elements.minAmountInput) elements.minAmountInput.value = plat.defaultMin;
+    if (elements.maxAmountInput) elements.maxAmountInput.value = plat.defaultMax;
+  }
+
+  // 6. Update Favicon and Apple Touch Icon for Home Screen
   const favicon = document.getElementById('dynamicFavicon');
   if (favicon) favicon.href = plat.logo;
 
   const appleIcon = document.getElementById('dynamicAppleIcon');
   if (appleIcon) {
-    appleIcon.href = plat.id === 'hotmart' ? './hotmart-icon.png?v=6' : './apple-touch-icon.png?v=6';
+    if (plat.id === 'midinero') appleIcon.href = './midinero-icon.png?v=7';
+    else if (plat.id === 'hotmart') appleIcon.href = './hotmart-icon.png?v=7';
+    else appleIcon.href = './apple-touch-icon.png?v=7';
   }
 
   document.title = `${plat.name} - Notificaciones en Ráfaga`;
@@ -158,6 +210,7 @@ function setPlatform(platformKey) {
   const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
   if (appleTitleMeta) appleTitleMeta.setAttribute('content', plat.name);
 
+  updateStatsDisplay();
   showToast(`🎯 Plataforma seleccionada: ${plat.name}`);
 }
 
@@ -263,7 +316,7 @@ function urlBase64ToUint8Array(base64String) {
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      swRegistration = await navigator.serviceWorker.register('./sw.js?v=5', { scope: './' });
+      swRegistration = await navigator.serviceWorker.register('./sw.js?v=7', { scope: './' });
       pushSubscription = await swRegistration.pushManager.getSubscription();
       if (pushSubscription) {
         state.pushEnabled = true;
@@ -381,7 +434,7 @@ function showFloatingIOSBanner(sale) {
     <div class="ios-floating-body">
       <div class="ios-floating-header">
         <span class="ios-floating-title">${sale.title}</span>
-        <span class="ios-floating-time">ahora</span>
+        <span class="ios-floating-time">Ahora</span>
       </div>
       <div class="ios-floating-msg">${sale.body}</div>
     </div>
@@ -432,8 +485,13 @@ function releaseWakeLock() {
 // ===================================================
 // DYNAMIC TRANSACTION DATA BUILDER
 // ===================================================
+function formatCurrencyNumber(val, currConfig) {
+  const locale = currConfig.locale || 'es-UY';
+  return Number(val).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function generateSaleData() {
-  const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.USD;
+  const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.UYU;
   const plat = PLATFORMS[state.platform] || PLATFORMS.falko;
   
   let amount = 0;
@@ -445,21 +503,14 @@ function generateSaleData() {
     amount = (Math.random() * (max - min) + min).toFixed(2);
   }
 
-  // Generar código de transacción con el prefijo de la plataforma (FK... o HP...)
   const randomCode = plat.codePrefix + Math.floor(1000000000 + Math.random() * 9000000000);
-
   const customProd = elements.customProductInput ? elements.customProductInput.value.trim() : '';
 
-  // Formatos realistas según la plataforma
   const titles = plat.titles;
   const title = titles[Math.floor(Math.random() * titles.length)];
 
-  const formattedAmount = `${curr.prefix}${Number(amount).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  
-  let body = `Tu comisión: ${formattedAmount} - ${randomCode}`;
-  if (customProd) {
-    body = `${customProd} - Tu comisión: ${formattedAmount} - ${randomCode}`;
-  }
+  const formattedAmount = `${curr.prefix}${formatCurrencyNumber(amount, curr)}`;
+  const body = plat.formatBody(formattedAmount, randomCode, customProd);
 
   return {
     title,
@@ -468,7 +519,7 @@ function generateSaleData() {
     formattedAmount,
     code: randomCode,
     platform: plat.id,
-    time: "ahora"
+    time: "Ahora"
   };
 }
 
@@ -529,7 +580,7 @@ function renderBannerToFeed(sale) {
     <div class="banner-content">
       <div class="banner-header">
         <span class="banner-title">${sale.title}</span>
-        <span class="banner-time">ahora</span>
+        <span class="banner-time">Ahora</span>
       </div>
       <div class="banner-body">${sale.body}</div>
     </div>
@@ -604,9 +655,9 @@ function toggleBurst() {
 }
 
 function updateStatsDisplay() {
-  const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.USD;
+  const curr = CURRENCY_MAP[state.currency] || CURRENCY_MAP.UYU;
   if (elements.statRevenue) {
-    elements.statRevenue.textContent = `${curr.prefix}${state.totalRevenue.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    elements.statRevenue.textContent = `${curr.prefix}${formatCurrencyNumber(state.totalRevenue, curr)}`;
   }
   if (elements.statSales) {
     elements.statSales.textContent = state.totalSales.toLocaleString();
@@ -656,18 +707,13 @@ function initEvents() {
   }
 
   // Platform switcher buttons
-  if (elements.tabFalko) {
-    elements.tabFalko.addEventListener('click', () => setPlatform('falko'));
-  }
-  if (elements.tabHotmart) {
-    elements.tabHotmart.addEventListener('click', () => setPlatform('hotmart'));
-  }
-  if (elements.headerPillFalko) {
-    elements.headerPillFalko.addEventListener('click', () => setPlatform('falko'));
-  }
-  if (elements.headerPillHotmart) {
-    elements.headerPillHotmart.addEventListener('click', () => setPlatform('hotmart'));
-  }
+  if (elements.tabFalko) elements.tabFalko.addEventListener('click', () => setPlatform('falko'));
+  if (elements.tabHotmart) elements.tabHotmart.addEventListener('click', () => setPlatform('hotmart'));
+  if (elements.tabMidinero) elements.tabMidinero.addEventListener('click', () => setPlatform('midinero'));
+
+  if (elements.headerPillFalko) elements.headerPillFalko.addEventListener('click', () => setPlatform('falko'));
+  if (elements.headerPillHotmart) elements.headerPillHotmart.addEventListener('click', () => setPlatform('hotmart'));
+  if (elements.headerPillMidinero) elements.headerPillMidinero.addEventListener('click', () => setPlatform('midinero'));
 
   elements.btnToggleBurst.addEventListener('click', toggleBurst);
   elements.btnSingleSale.addEventListener('click', () => {
@@ -740,39 +786,39 @@ function initEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   initEvents();
 
-  // Read URL query parameter if present (e.g. ?p=hotmart or ?p=falko)
+  // Read URL query parameter if present (e.g. ?p=midinero or ?p=hotmart or ?p=falko)
   const urlParams = new URLSearchParams(window.location.search);
   const requestedPlatform = urlParams.get('p') || urlParams.get('platform');
-  if (requestedPlatform === 'hotmart' || requestedPlatform === 'falko') {
+  if (requestedPlatform === 'midinero' || requestedPlatform === 'hotmart' || requestedPlatform === 'falko') {
     setPlatform(requestedPlatform);
   } else {
-    setPlatform('falko'); // default platform
+    setPlatform('midinero'); // default to midinero as requested by user!
   }
 
   updateStatsDisplay();
 
-  // Initial preview feed
+  // Initial preview feed matching Midinero screenshot
   setTimeout(() => {
+    renderBannerToFeed({
+      title: "Recarga realizada con éxito",
+      body: "Se registró una recarga por $3.900,00 en tu tarjeta Midinero",
+      formattedAmount: "$3.900,00",
+      platform: 'midinero',
+      time: "Ahora"
+    });
     renderBannerToFeed({
       title: "¡Venta realizada en Falko!",
       body: "Tu comisión: US$ 17.45 - FK2295266365",
       formattedAmount: "US$ 17.45",
       platform: 'falko',
-      time: "ahora"
+      time: "Ahora"
     });
     renderBannerToFeed({
       title: "Venta realizada con Tarjeta...",
       body: "Tu comisión: US$ 17.44 - HP1353385734",
       formattedAmount: "US$ 17.44",
       platform: 'hotmart',
-      time: "ahora"
-    });
-    renderBannerToFeed({
-      title: "Venta efectuada - Falko Pay",
-      body: "Tu comisión: US$ 17.41 - FK0900520954",
-      formattedAmount: "US$ 17.41",
-      platform: 'falko',
-      time: "ahora"
+      time: "Ahora"
     });
   }, 200);
 });
