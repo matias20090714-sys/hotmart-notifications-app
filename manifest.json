@@ -1,19 +1,19 @@
 {
-  "name": "Midinero",
-  "short_name": "Midinero",
+  "name": "Tarjeta Midinero",
+  "short_name": "Tarjeta Midinero",
   "start_url": "./index.html?p=midinero",
   "display": "standalone",
   "background_color": "#040614",
   "theme_color": "#0000C8",
   "icons": [
     {
-      "src": "./midinero-icon.png?v=9",
+      "src": "./midinero-icon.png?v=10",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./midinero-192.png?v=9",
+      "src": "./midinero-192.png?v=10",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
