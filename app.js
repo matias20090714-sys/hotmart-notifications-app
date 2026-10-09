@@ -77,7 +77,7 @@ const PLATFORMS = {
     ],
     formatBody: (amountStr, code, customProd) => {
       if (customProd) return `Se registró una recarga por ${amountStr} ${customProd}`;
-      return `Se registró una recarga por ${amountStr} a tarjeta Midinero`;
+      return `Se registró una recarga por ${amountStr} en tu tarjeta Midinero`;
     }
   }
 };
@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     renderBannerToFeed({
       title: "Recarga realizada con éxito",
-      body: "Se registró una recarga por $3.900,00 a tarjeta Midinero",
+      body: "Se registró una recarga por $3.900,00 en tu tarjeta Midinero",
       formattedAmount: "$3.900,00",
       platform: 'midinero',
       time: "Ahora"
