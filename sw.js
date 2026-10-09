@@ -1,4 +1,4 @@
-const CACHE_NAME = 'falko-v4';
+const CACHE_NAME = 'midinero-v8';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -18,10 +18,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   let data = {
-    title: 'Venta realizada con Tarjeta...',
-    body: 'Tu comisión: US$ 17.45 - FK2295266365',
-    icon: './falko-icon.png?v=4',
-    badge: './falko-icon.png?v=4'
+    title: 'Recarga realizada con éxito',
+    body: 'Se registró una recarga por $3.900,00 en tu tarjeta Midinero',
+    icon: './midinero-icon.png?v=8',
+    badge: './midinero-icon.png?v=8'
   };
 
   if (event.data) {
@@ -34,10 +34,10 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || './falko-icon.png?v=4',
-    badge: data.badge || './falko-icon.png?v=4',
+    icon: data.icon || './midinero-icon.png?v=8',
+    badge: data.badge || './midinero-icon.png?v=8',
     vibrate: [200, 100, 200],
-    tag: 'falko-sale-' + Date.now(),
+    tag: 'midinero-' + Date.now(),
     renotify: true,
     data: data.data || { url: '/' }
   };
