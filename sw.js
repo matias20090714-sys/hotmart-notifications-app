@@ -1,4 +1,4 @@
-const CACHE_NAME = 'midinero-v10';
+const CACHE_NAME = 'midinero-v12';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -19,9 +19,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   let data = {
     title: 'Recarga realizada con éxito',
-    body: 'Se registró una recarga por $3.900,00 a tarjeta Midinero',
-    icon: './midinero-icon.png?v=10',
-    badge: './midinero-icon.png?v=10'
+    body: 'Se registró una recarga por $3.900,00 en tu tarjeta Midinero',
+    icon: './midinero-icon.png?v=12',
+    badge: './midinero-icon.png?v=12'
   };
 
   if (event.data) {
@@ -34,8 +34,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || './midinero-icon.png?v=10',
-    badge: data.badge || './midinero-icon.png?v=10',
+    icon: data.icon || './midinero-icon.png?v=12',
+    badge: data.badge || './midinero-icon.png?v=12',
     vibrate: [200, 100, 200],
     tag: 'midinero-' + Date.now(),
     renotify: true,
