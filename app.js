@@ -58,15 +58,15 @@ const PLATFORMS = {
   },
   midinero: {
     id: 'midinero',
-    name: 'Midinero',
+    name: 'Tarjeta Midinero',
     codePrefix: 'MD',
     defaultCurrency: 'UYU',
     defaultMin: 3900,
     defaultMax: 3900,
-    logo: './midinero-icon.png?v=7',
+    logo: './midinero-icon.png?v=10',
     themeClass: 'theme-midinero',
     headerTitle: 'Tarjeta Midinero Live',
-    headerSubtitle: 'Notificaciones Oficiales Midinero',
+    headerSubtitle: 'Notificaciones Oficiales Tarjeta Midinero',
     islandDefaultTitle: 'Recarga realizada con éxito',
     titles: [
       "Recarga realizada con éxito",
@@ -77,7 +77,7 @@ const PLATFORMS = {
     ],
     formatBody: (amountStr, code, customProd) => {
       if (customProd) return `Se registró una recarga por ${amountStr} ${customProd}`;
-      return `Se registró una recarga por ${amountStr} en tu tarjeta Midinero`;
+      return `Se registró una recarga por ${amountStr} a tarjeta Midinero`;
     }
   }
 };
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     renderBannerToFeed({
       title: "Recarga realizada con éxito",
-      body: "Se registró una recarga por $3.900,00 en tu tarjeta Midinero",
+      body: "Se registró una recarga por $3.900,00 a tarjeta Midinero",
       formattedAmount: "$3.900,00",
       platform: 'midinero',
       time: "Ahora"
