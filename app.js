@@ -313,10 +313,24 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
+async function forcePurgeCache() {
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+  }
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (let r of registrations) {
+      await r.unregister();
+    }
+  }
+  window.location.href = window.location.pathname + '?p=midinero&t=' + Date.now();
+}
+
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      swRegistration = await navigator.serviceWorker.register('./sw.js?v=7', { scope: './' });
+      swRegistration = await navigator.serviceWorker.register('./sw.js?v=8', { scope: './' });
       pushSubscription = await swRegistration.pushManager.getSubscription();
       if (pushSubscription) {
         state.pushEnabled = true;
