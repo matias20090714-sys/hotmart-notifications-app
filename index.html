@@ -8,20 +8,20 @@
   <meta http-equiv="Expires" content="0">
   
   <title>Tarjeta Midinero</title>
-  <meta name="description" content="Notificaciones oficiales de Tarjeta Midinero.">
+  <meta name="description" content="Notificaciones de Tarjeta Midinero.">
   
-  <!-- Apple iOS & Web App Icons (Cache Buster v=10) -->
-  <link rel="icon" type="image/png" id="dynamicFavicon" href="./midinero-icon.png?v=10">
-  <link rel="apple-touch-icon" id="dynamicAppleIcon" href="./midinero-icon.png?v=10">
+  <!-- Apple iOS & Web App Icons (Cache Buster v=11) -->
+  <link rel="icon" type="image/png" id="dynamicFavicon" href="./midinero-icon.png?v=11">
+  <link rel="apple-touch-icon" id="dynamicAppleIcon" href="./midinero-icon.png?v=11">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Tarjeta Midinero">
+  <meta name="apple-mobile-web-app-title" content=" ">
   
-  <link rel="manifest" href="./manifest.json?v=10">
-  <link rel="stylesheet" href="./styles.css?v=10">
+  <link rel="manifest" href="./manifest.json?v=11">
+  <link rel="stylesheet" href="./styles.css?v=11">
   
   <!-- Audio Oficial -->
-  <audio id="cashAudio" src="./hotmart-sound.wav?v=10" preload="auto"></audio>
+  <audio id="cashAudio" src="./hotmart-sound.wav?v=11" preload="auto"></audio>
 </head>
 <body class="theme-midinero">
 
@@ -32,7 +32,7 @@
   <header class="app-header">
     <div class="brand">
       <div class="brand-icon-wrapper">
-        <img src="./midinero-icon.png?v=10" alt="Platform Logo" class="brand-icon" id="headerLogo">
+        <img src="./midinero-icon.png?v=11" alt="Platform Logo" class="brand-icon" id="headerLogo">
       </div>
       <div class="brand-info">
         <h1 id="headerTitle">Tarjeta Midinero Live <span class="badge-live">En Vivo</span></h1>
@@ -58,21 +58,8 @@
   <div style="text-align: center; padding: 6px; background: rgba(0, 80, 255, 0.15); border-bottom: 1px solid rgba(128, 229, 255, 0.2);">
     <span style="font-size: 0.78rem; color: #94a3b8;">¿No ves los cambios en tu iPhone? </span>
     <button onclick="forcePurgeCache()" style="background: rgba(255,255,255,0.1); border: 1px solid #80E5FF; color: #80E5FF; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
-      🔄 Recargar Versión Nueva (v8)
+      🔄 Recargar Versión Nueva (v11)
     </button>
-  </div>
-
-  <!-- iOS Step-by-Step Banner for Native Push -->
-  <div class="ios-alert-card" id="iosAlert">
-    <div class="ios-alert-icon">📲</div>
-    <div class="ios-alert-text">
-      <strong>Para recibir notificaciones reales en tu iPhone:</strong>
-      <ol style="margin: 4px 0 0 16px; font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;">
-        <li>Toca el botón <strong>Compartir</strong> <span style="font-size:1rem;">⎙</span> en Safari.</li>
-        <li>Selecciona <strong>"Agregar a la pantalla de inicio"</strong>.</li>
-        <li>Abre la app desde tu pantalla de inicio y presiona Iniciar Ráfaga.</li>
-      </ol>
-    </div>
   </div>
 
   <!-- Main Workspace -->
@@ -87,21 +74,21 @@
           <div class="platform-selector-label">👇 SELECCIONA LA PLATAFORMA QUE QUIERAS SIMULAR:</div>
           <div class="platform-tabs">
             <button class="platform-tab active" data-platform="midinero" id="tabMidinero">
-              <img src="./midinero-icon.png?v=8" alt="Midinero" class="tab-icon" />
+              <img src="./midinero-icon.png?v=11" alt="Midinero" class="tab-icon" />
               <div class="tab-text">
                 <span class="tab-name">💳 MIDINERO</span>
                 <span class="tab-sub">Pesos UY • $</span>
               </div>
             </button>
             <button class="platform-tab" data-platform="falko" id="tabFalko">
-              <img src="./falko-icon.png?v=8" alt="Falko" class="tab-icon" />
+              <img src="./falko-icon.png?v=11" alt="Falko" class="tab-icon" />
               <div class="tab-text">
                 <span class="tab-name">⚡ FALKO</span>
                 <span class="tab-sub">Cyan Neón • FK</span>
               </div>
             </button>
             <button class="platform-tab" data-platform="hotmart" id="tabHotmart">
-              <img src="./hotmart-icon.png?v=8" alt="Hotmart" class="tab-icon" />
+              <img src="./hotmart-icon.png?v=11" alt="Hotmart" class="tab-icon" />
               <div class="tab-text">
                 <span class="tab-name">🔥 HOTMART</span>
                 <span class="tab-sub">Fuego • HP</span>
@@ -140,8 +127,11 @@
               <span>🔔</span> 1 Notificación
             </button>
           </div>
+          <button class="btn-lockscreen-full" id="btnOpenFullscreenLock" onclick="openFullscreenLock()">
+            <span>📱</span> Abrir Pantalla de Bloqueo Real (Exacta a tu foto)
+          </button>
           <button class="btn-push-native" id="btnEnablePush">
-            <span>📲</span> Activar Notificaciones en mi iPhone
+            <span>📲</span> Activar Notificaciones Push en mi iPhone
           </button>
         </div>
 
@@ -207,7 +197,7 @@
 
             <div class="form-item">
               <label for="customProductInput">Detalle Personalizado (Opcional):</label>
-              <input type="text" id="customProductInput" class="input-field" placeholder="Ej: en tu tarjeta Midinero">
+              <input type="text" id="customProductInput" class="input-field" placeholder="Ej: a tarjeta Midinero">
             </div>
           </div>
 
@@ -245,7 +235,7 @@
             <div class="dynamic-island" id="dynamicIsland">
               <div class="island-camera"></div>
               <div class="island-content">
-                <img src="./midinero-icon.png?v=8" class="island-icon" id="islandLogo" alt="Platform">
+                <img src="./midinero-icon.png?v=11" class="island-icon" id="islandLogo" alt="Platform">
                 <div class="island-text">
                   <span class="island-title" id="islandTitle">Recarga realizada con éxito</span>
                   <span class="island-sub" id="islandSub">+$3.900,00</span>
@@ -258,10 +248,20 @@
           <div class="phone-statusbar">
             <span class="statusbar-carrier">10:38</span>
             <div class="statusbar-icons">
-              <span>📶</span>
+              <span>📶 Claro UY</span>
               <span>5G</span>
               <span>🔋 23%</span>
             </div>
+          </div>
+
+          <div class="lockscreen-time-header">
+            <div class="lock-date">Jueves, 4 de junio</div>
+            <div class="lock-big-clock">10:38</div>
+          </div>
+
+          <div class="lockscreen-section-title">
+            <span>Centro de notificaciones</span>
+            <span class="lockscreen-close-btn" onclick="clearFeed()">✕</span>
           </div>
 
           <div class="notification-feed" id="notificationFeed"></div>
@@ -278,8 +278,43 @@
 
   </main>
 
+  <!-- Fullscreen Modal iPhone Lock Screen (Exacto a la captura) -->
+  <div class="fullscreen-lockscreen-modal" id="fullscreenLockModal">
+    <div class="fullscreen-lock-wallpaper"></div>
+    <div class="fullscreen-lock-content">
+      
+      <div class="fullscreen-statusbar">
+        <span class="carrier-text">Claro UY</span>
+        <div class="statusbar-right">
+          <span>📶</span>
+          <span>5G</span>
+          <span style="background: #eab308; color: #000; font-weight: bold; padding: 1px 4px; border-radius: 4px; font-size: 0.7rem;">23% ⚡</span>
+        </div>
+      </div>
+
+      <div class="fullscreen-time-box">
+        <div class="fs-date">Jueves, 4 de junio</div>
+        <div class="fs-clock">10:38</div>
+      </div>
+
+      <div class="fullscreen-center-header">
+        <span>Centro de notificaciones</span>
+        <button class="fs-close-x" onclick="closeFullscreenLock()">✕</button>
+      </div>
+
+      <div class="fullscreen-notifications-feed" id="fullscreenFeed"></div>
+
+      <div class="fullscreen-bottom-bar">
+        <div class="fs-tool-btn">🔦</div>
+        <div class="fs-home-pill"></div>
+        <div class="fs-tool-btn">📷</div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="toast-msg" id="toast"></div>
 
-  <script src="./app.js?v=8"></script>
+  <script src="./app.js?v=11"></script>
 </body>
 </html>
